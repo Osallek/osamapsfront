@@ -2,104 +2,260 @@ import { Style } from 'mapbox-gl';
 
 export const mapStyle: Style = {
   version: 8,
-  name: 'Positron',
+  name: 'OsallekMaps',
+  sprite: 'https://openmaptiles.github.io/osm-bright-gl-style/sprite',
+  glyphs: 'https://openmaptiles.geo.data.gouv.fr/fonts/{fontstack}/{range}.pbf',
   sources: {
-    carto: {
-      'type': 'vector',
-      'url': 'https://tiles.basemaps.cartocdn.com/vector/carto.streets/v1/tiles.json'
+    decoupageAdministratif: {
+      type: 'vector',
+      url: 'https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif.json'
+    },
+    opendata: {
+      type: 'raster',
+      tiles: [
+        'https://wxs.ign.fr/essentiels/geoportail/wmts?layer=ORTHOIMAGERY.ORTHOPHOTOS&style=normal&tilematrixset=PM&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix={z}&TileCol={x}&TileRow={y}'
+      ],
+      tileSize: 256,
+      attribution: 'Images aériennes @ IGN',
+      minzoom: 0,
+      maxzoom: 19
+    },
+    openmaptiles: {
+      type: 'vector',
+      url: 'https://openmaptiles.geo.data.gouv.fr/data/france-vector.json'
     }
   },
-  sprite: 'https://tiles.basemaps.cartocdn.com/gl/positron-gl-style/sprite',
-  glyphs: 'https://tiles.basemaps.cartocdn.com/fonts/{fontstack}/{range}.pbf',
   layers: [
     {
-      id: 'background',
-      type: 'background',
-      layout: {
-        visibility: 'visible'
-      },
+      id: 'satellite',
+      type: 'raster',
+      source: 'opendata',
       paint: {
-        'background-color': '#fafaf8',
-        'background-opacity': 1
+        'raster-resampling': 'linear'
       }
     },
     {
-      id: 'waterway',
+      id: 'region_line',
       type: 'line',
-      source: 'carto',
-      'source-layer': 'waterway',
+      source: 'decoupageAdministratif',
+      'source-layer': 'regions',
+      layout: {
+        'line-join': 'bevel'
+      },
       paint: {
-        'line-color': '#d1dbdf',
-        'line-width': {
+        'line-color': 'black',
+        'line-width': 1.5
+      }
+    },
+    {
+      id: 'region',
+      type: 'fill',
+      source: 'decoupageAdministratif',
+      'source-layer': 'regions',
+      paint: {
+        'fill-color': 'black',
+        'fill-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          0.2,
+          0
+        ]
+      }
+    },
+    {
+      id: 'region_name',
+      type: 'symbol',
+      source: 'openmaptiles',
+      'source-layer': 'place',
+      maxzoom: 7.5,
+      filter: [
+        '!in',
+        'class',
+        'city',
+        'town',
+        'village',
+        'country',
+        'continent'
+      ],
+      layout: {
+        'text-field': '{name:fr}',
+        'text-font': [
+          'Noto Sans Bold'
+        ],
+        'text-letter-spacing': 0.1,
+        'text-max-width': 9,
+        'text-size': {
+          base: 1.6,
           stops: [
             [
-              8,
-              0.5
-            ],
-            [
-              9,
-              1
+              12,
+              14
             ],
             [
               15,
-              2
-            ],
-            [
-              16,
-              3
+              17
             ]
           ]
-        }
+        },
+        'text-transform': 'uppercase',
+        visibility: 'visible'
+      },
+      'paint': {
+        'text-color': 'black',
+        'text-halo-color': 'rgba(255,255,255,0.8)',
+        'text-halo-width': 1.2
       }
     },
     {
-      id: 'water',
+      id: 'departement',
       type: 'fill',
-      source: 'carto',
-      'source-layer': 'water',
-      minzoom: 0,
-      maxzoom: 16,
-      filter: [
-        'all',
-        [
-          '==',
-          '$type',
-          'Polygon'
-        ]
-      ],
-      layout: {
-        visibility: 'visible'
-      },
+      source: 'decoupageAdministratif',
+      'source-layer': 'departements',
+      minzoom: 7.5,
+      maxzoom: 11,
       paint: {
-        'fill-color': '#6d9dfe',
-        'fill-antialias': true,
-        'fill-translate-anchor': 'map',
-        'fill-opacity': 1
+        'fill-color': 'yellow',
+        'fill-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          0.2,
+          0
+        ]
       }
     },
     {
-      id: 'water_shadow',
-      type: 'fill',
-      source: 'carto',
-      'source-layer': 'water',
-      minzoom: 0,
+      id: 'departement_line',
+      type: 'line',
+      source: 'decoupageAdministratif',
+      'source-layer': 'departements',
+      minzoom: 7.5,
+      paint: {
+        'line-color': 'yellow',
+        'line-opacity': 1,
+        'line-width': 1
+      }
+    },
+    {
+      id: 'departement_name',
+      type: 'symbol',
+      source: 'openmaptiles',
+      'source-layer': 'place',
+      minzoom: 7.5,
+      maxzoom: 11,
       filter: [
         'all',
         [
-          '==',
-          '$type',
-          'Polygon'
+          'in',
+          'class',
+          'city',
+          'town'
+        ],
+        [
+          "<=",
+          "rank",
+          11
+        ],
+      ],
+      layout: {
+        'text-field': '{name:fr}',
+        'text-font': [
+          'Noto Sans Regular'
+        ],
+        'text-max-width': 8,
+        'text-size': {
+          base: 1.2,
+          stops: [
+            [
+              7,
+              14
+            ],
+            [
+              11,
+              24
+            ]
+          ]
+        },
+        visibility: 'visible'
+      },
+      'paint': {
+        'text-color': 'black',
+        'text-halo-color': 'rgba(255,255,255,0.8)',
+        'text-halo-width': 1.2
+      }
+    },
+    {
+      id: 'commune',
+      type: 'fill',
+      source: 'decoupageAdministratif',
+      'source-layer': 'communes',
+      minzoom: 11,
+      maxzoom: 15,
+      paint: {
+        'fill-color': 'pink',
+        'fill-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          0.2,
+          0
+        ]
+      }
+    },
+    {
+      id: 'commune_line',
+      type: 'line',
+      source: 'decoupageAdministratif',
+      'source-layer': 'communes',
+      minzoom: 11,
+      paint: {
+        'line-color': 'pink',
+        'line-width': 1.5,
+        'line-opacity': 1,
+        'line-blur': 0
+      }
+    },
+    {
+      id: 'commune_name',
+      type: 'symbol',
+      source: 'openmaptiles',
+      'source-layer': 'place',
+      minzoom: 11,
+      maxzoom: 15,
+      filter: [
+        'all',
+        [
+          'in',
+          'class',
+          'city',
+          'town',
+          'village'
         ]
       ],
       layout: {
+        'text-field': '{name:fr}',
+        'text-font': [
+          'Noto Sans Regular'
+        ],
+        'text-max-width': 8,
+        'text-size': {
+          base: 1.2,
+          stops: [
+            [
+              7,
+              14
+            ],
+            [
+              11,
+              24
+            ]
+          ]
+        },
         visibility: 'visible'
       },
-      paint: {
-        'fill-color': 'transparent',
-        'fill-antialias': true,
-        'fill-translate-anchor': 'map',
-        'fill-opacity': 1
+      'paint': {
+        'text-color': 'black',
+        'text-halo-color': 'rgba(255,255,255,0.8)',
+        'text-halo-width': 1.2
       }
-    }
+    },
   ]
 };
