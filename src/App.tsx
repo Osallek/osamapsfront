@@ -1,7 +1,7 @@
 import { BrowserRouter } from 'react-router-dom';
 import AppRouter from 'routers/AppRouter';
-import './App.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import './App.css';
 
 function App() {
   return (

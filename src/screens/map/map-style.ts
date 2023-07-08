@@ -8,7 +8,8 @@ export const mapStyle: Style = {
   sources: {
     decoupageAdministratif: {
       type: 'vector',
-      url: 'https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif.json'
+      url: 'https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif.json',
+      promoteId: 'code'
     },
     opendata: {
       type: 'raster',
@@ -52,6 +53,7 @@ export const mapStyle: Style = {
       type: 'fill',
       source: 'decoupageAdministratif',
       'source-layer': 'regions',
+      maxzoom: 8,
       paint: {
         'fill-color': 'black',
         'fill-opacity': [
@@ -67,7 +69,7 @@ export const mapStyle: Style = {
       type: 'symbol',
       source: 'openmaptiles',
       'source-layer': 'place',
-      maxzoom: 7.5,
+      maxzoom: 8,
       filter: [
         '!in',
         'class',
@@ -111,7 +113,7 @@ export const mapStyle: Style = {
       type: 'fill',
       source: 'decoupageAdministratif',
       'source-layer': 'departements',
-      minzoom: 7.5,
+      minzoom: 8,
       maxzoom: 11,
       paint: {
         'fill-color': 'yellow',
@@ -128,7 +130,7 @@ export const mapStyle: Style = {
       type: 'line',
       source: 'decoupageAdministratif',
       'source-layer': 'departements',
-      minzoom: 7.5,
+      minzoom: 8,
       paint: {
         'line-color': 'yellow',
         'line-opacity': 1,
@@ -140,7 +142,7 @@ export const mapStyle: Style = {
       type: 'symbol',
       source: 'openmaptiles',
       'source-layer': 'place',
-      minzoom: 7.5,
+      minzoom: 8,
       maxzoom: 11,
       filter: [
         'all',
@@ -190,6 +192,10 @@ export const mapStyle: Style = {
       'source-layer': 'communes',
       minzoom: 11,
       maxzoom: 15,
+      filter: [
+        '!has',
+        'commune'
+      ],
       paint: {
         'fill-color': 'pink',
         'fill-opacity': [
@@ -206,6 +212,10 @@ export const mapStyle: Style = {
       source: 'decoupageAdministratif',
       'source-layer': 'communes',
       minzoom: 11,
+      filter: [
+        '!has',
+        'commune'
+      ],
       paint: {
         'line-color': 'pink',
         'line-width': 1.5,
