@@ -16,6 +16,7 @@
     "@types/react-dom": "^18.2.6",
     "axios": "^1.4.0",
     "i": "^0.3.7",
+    "javascript-color-gradient": "^2.4.4",
     "json-loader": "^0.5.7",
     "mapbox-gl": "npm:empty-npm-package@^1.0.0",
     "maplibre-gl": "^3.1.0",
@@ -26,6 +27,7 @@
     "react-map-gl": "^7.0.25",
     "react-router-dom": "^6.13.0",
     "react-scripts": "5.0.1",
+    "simple-statistics": "^7.8.3",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
@@ -55,6 +57,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/javascript-color-gradient": "^2.4.0",
     "eslint-config-prettier": "^8.8.0",
     "prettier": "^2.8.8"
   }

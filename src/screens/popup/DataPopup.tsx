@@ -11,7 +11,7 @@ interface DataPopupProps {
 
 function DataPopup({ data, onClose }: DataPopupProps) {
   return (
-    <Card sx={ { minWidth: 300 } }>
+    <Card sx={ { minWidth: 400 } }>
       {
         data.level === Level.COMMUNE && (
           <CommuneContent commune={ data as Commune } onClose={ onClose }/>
@@ -19,12 +19,12 @@ function DataPopup({ data, onClose }: DataPopupProps) {
       }
       {
         data.level === Level.DEPARTEMENT && (
-          <DepartementContent departement={ data as Departement }/>
+          <DepartementContent departement={ data as Departement } onClose={ onClose }/>
         )
       }
       {
         data.level === Level.REGION && (
-          <RegionContent region={ data as Region }/>
+          <RegionContent region={ data as Region } onClose={ onClose }/>
         )
       }
     </Card>

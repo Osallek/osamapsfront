@@ -36,19 +36,6 @@ export const mapStyle: Style = {
       }
     },
     {
-      id: 'region_line',
-      type: 'line',
-      source: 'decoupageAdministratif',
-      'source-layer': 'regions',
-      layout: {
-        'line-join': 'bevel'
-      },
-      paint: {
-        'line-color': 'black',
-        'line-width': 1.5
-      }
-    },
-    {
       id: 'region',
       type: 'fill',
       source: 'decoupageAdministratif',
@@ -62,6 +49,32 @@ export const mapStyle: Style = {
           0.2,
           0
         ]
+      }
+    },
+    {
+      id: 'region_data',
+      type: 'fill',
+      source: 'decoupageAdministratif',
+      'source-layer': 'regions',
+      maxzoom: 8,
+      layout: {
+        visibility: 'none',
+      },
+      paint: {
+        'fill-opacity': 0.8
+      },
+    },
+    {
+      id: 'region_line',
+      type: 'line',
+      source: 'decoupageAdministratif',
+      'source-layer': 'regions',
+      layout: {
+        'line-join': 'bevel'
+      },
+      paint: {
+        'line-color': 'black',
+        'line-width': 1.5
       }
     },
     {
@@ -124,6 +137,20 @@ export const mapStyle: Style = {
           0
         ]
       }
+    },
+    {
+      id: 'departement_data',
+      type: 'fill',
+      source: 'decoupageAdministratif',
+      'source-layer': 'departements',
+      minzoom: 8,
+      maxzoom: 11,
+      layout: {
+        visibility: 'none',
+      },
+      paint: {
+        'fill-opacity': 0.8
+      },
     },
     {
       id: 'departement_line',
@@ -205,6 +232,24 @@ export const mapStyle: Style = {
           0
         ]
       }
+    },
+    {
+      id: 'commune_data',
+      type: 'fill',
+      source: 'decoupageAdministratif',
+      'source-layer': 'communes',
+      minzoom: 11,
+      maxzoom: 15,
+      filter: [
+        '!has',
+        'commune'
+      ],
+      layout: {
+        visibility: 'none',
+      },
+      paint: {
+        'fill-opacity': 0.8
+      },
     },
     {
       id: 'commune_line',

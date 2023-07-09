@@ -11,6 +11,7 @@ export type IdName<I, N> = {
 
 export type DataNode = IdName<string, string> & {
   level: Level;
+  area: number;
 }
 
 export type Commune = DataNode & {

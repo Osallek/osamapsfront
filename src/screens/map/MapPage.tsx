@@ -27,7 +27,9 @@ function MapPage() {
       </Backdrop>
       <MapProvider>
         <DataContext.Provider value={ data }>
-          <MainMap data={ data }/>
+          {
+            data && <MainMap data={ data }/>
+          }
         </DataContext.Provider>
       </MapProvider>
     </Grid>
