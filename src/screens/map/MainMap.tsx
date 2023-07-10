@@ -157,7 +157,6 @@ function MapPage({ data }: MapPageProps) {
       }
 
       if (data.departements) {
-        console.log(getAreaExpression(data.departements))
         mapRef.current.getMap().setPaintProperty('departement_data', 'fill-color', getAreaExpression(data.departements));
         mapRef.current.getMap().setLayoutProperty('departement_data', 'visibility', 'visible');
       }
@@ -170,7 +169,7 @@ function MapPage({ data }: MapPageProps) {
   }, [data.regions, mapRef, loaded]);
 
   return (
-    <Map id="main"
+    <Map id='main'
          ref={ mapRef }
          mapLib={ maplibregl }
          style={ { height: '100%' } }
@@ -187,7 +186,7 @@ function MapPage({ data }: MapPageProps) {
          onSourceData={ onSourceData }
     >
       { position && activeData && (
-        <Popup longitude={ position.lng } latitude={ position.lat } anchor="bottom" closeOnMove={ false }
+        <Popup longitude={ position.lng } latitude={ position.lat } anchor='bottom' closeOnMove={ false }
                closeOnClick={ false } closeButton={ false } onClose={ e => setClicked(undefined) }>
           <DataPopup data={ activeData } onClose={ () => setClicked(undefined) }/>
         </Popup>) }

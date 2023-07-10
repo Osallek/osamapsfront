@@ -8,7 +8,7 @@ function onlyUnique(value: any, index: number, array: any[]) {
 
 export function getAreaExpression(data: Record<string, DataNode>): Array<any> {
   const clean = Object.values(data).map(value => value.area).filter(value => value !== undefined);
-  const regionGradient = getGradient(Math.min(7, Object.keys(clean).length));
+  const regionGradient = getGradient(Math.min(7, clean.length));
   const j = jenks(clean.filter(onlyUnique), regionGradient.length + 1);
 
   const colors: Array<{ value: number, color: string }> = [];

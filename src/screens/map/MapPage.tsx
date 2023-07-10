@@ -3,6 +3,7 @@ import { api } from 'api';
 import { createContext, useEffect, useState } from 'react';
 import { MapProvider } from 'react-map-gl';
 import MainMap from 'screens/map/MainMap';
+import MapMenu from 'screens/MapMenu/MapMenu';
 import { Data } from 'types/api.types';
 
 export const DataContext = createContext<Data | undefined>(undefined);
@@ -28,7 +29,12 @@ function MapPage() {
       <MapProvider>
         <DataContext.Provider value={ data }>
           {
-            data && <MainMap data={ data }/>
+            data && (
+              <>
+                <MapMenu data={ data }/>
+                <MainMap data={ data }/>
+              </>
+            )
           }
         </DataContext.Provider>
       </MapProvider>
