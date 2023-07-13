@@ -12,12 +12,12 @@ export type IdName<I, N> = {
 export type DataNode = IdName<string, string> & {
   level: Level;
   area: number;
+  population: Record<number, number>;
 }
 
 export type Commune = DataNode & {
   departement: string;
   zipCode: string;
-  point: Point;
 }
 
 export type Departement = DataNode & {
