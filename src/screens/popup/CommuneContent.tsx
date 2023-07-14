@@ -41,6 +41,16 @@ function CommuneContent({ commune, onClose }: CommuneContentProps) {
             </Typography>
           </Grid>
           {
+            commune.population && (
+              <Grid item>
+                <Typography variant='body2'>
+                  <FormattedMessage id='commune.population' values={ { year: Object.keys(commune.population).slice(-1)[0] } }/> : <FormattedNumber
+                  value={ Object.values(commune.population).slice(-1)[0] }/>
+                </Typography>
+              </Grid>
+            )
+          }
+          {
             commune.area && (
               <Grid item>
                 <Typography variant="body2">

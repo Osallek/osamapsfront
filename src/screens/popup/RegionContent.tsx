@@ -29,6 +29,16 @@ function RegionContent({ region, onClose }: RegionContentProps) {
                 id='region.chefLieu'/> : { `${ data.communes[region.chefLieu].name } (${ region.chefLieu })` }
             </Typography>
           </Grid>
+          {
+            region.population && (
+              <Grid item>
+                <Typography variant='body2'>
+                  <FormattedMessage id='region.population' values={ { year: Object.keys(region.population).slice(-1)[0] } }/> : <FormattedNumber
+                  value={ Object.values(region.population).slice(-1)[0] }/>
+                </Typography>
+              </Grid>
+            )
+          }
           <Grid item>
             <Typography variant='body2'>
               <FormattedMessage id='region.area'/> : <FormattedNumber value={ region.area }/> km²

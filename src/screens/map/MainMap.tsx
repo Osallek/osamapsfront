@@ -103,11 +103,11 @@ function MapPage({ data }: MapPageProps) {
 
         if (feature.id && feature.source === 'decoupageAdministratif') {
           if (feature.sourceLayer === 'regions' && data.regions && data.regions[feature.id]) {
-            e.target.setFeatureState(feature, { hover: false, area: data.regions[feature.id].area });
+            e.target.setFeatureState(feature, { ...feature.state , ...data.regions[feature.id] });
           } else if (feature.sourceLayer === 'departements' && data.departements && data.departements[feature.id]) {
-            e.target.setFeatureState(feature, { hover: false, area: data.departements[feature.id].area });
+            e.target.setFeatureState(feature, { ...feature.state, ...data.departements[feature.id] });
           } else if (feature.sourceLayer === 'communes' && data.communes && data.communes[feature.id]) {
-            e.target.setFeatureState(feature, { hover: false, area: data.communes[feature.id].area });
+            e.target.setFeatureState(feature, { ...feature.state, ...data.communes[feature.id] });
           }
         }
 
@@ -121,24 +121,18 @@ function MapPage({ data }: MapPageProps) {
         case 'region': {
           if (data.regions[clicked.id]) {
             setActiveData(data.regions[clicked.id]);
-          } else {
-            console.log('No region');
           }
           break;
         }
         case 'departement': {
           if (data.departements[clicked.id]) {
             setActiveData(data.departements[clicked.id]);
-          } else {
-            console.log('No departement');
           }
           break;
         }
         case 'commune': {
           if (data.communes[clicked.id]) {
             setActiveData(data.communes[clicked.id]);
-          } else {
-            console.log('No commune');
           }
           break;
         }
@@ -166,7 +160,7 @@ function MapPage({ data }: MapPageProps) {
         mapRef.current.getMap().setLayoutProperty('commune_data', 'visibility', 'visible');
       }
     }
-  }, [data.regions, mapRef, loaded]);
+  }, [mapRef, loaded]);
 
   return (
     <Map id='main'

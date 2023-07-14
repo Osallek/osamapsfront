@@ -36,6 +36,16 @@ function DepartementContent({ departement, onClose }: DepartementContentProps) {
                 id='departement.chefLieu'/> : { `${ data.communes[departement.chefLieu].name } (${ departement.chefLieu })` }
             </Typography>
           </Grid>
+          {
+            departement.population && (
+              <Grid item>
+                <Typography variant='body2'>
+                  <FormattedMessage id='departement.population' values={ { year: Object.keys(departement.population).slice(-1)[0] } }/> : <FormattedNumber
+                  value={ Object.values(departement.population).slice(-1)[0] }/>
+                </Typography>
+              </Grid>
+            )
+          }
           <Grid item>
             <Typography variant='body2'>
               <FormattedMessage id='departement.area'/> : <FormattedNumber value={ departement.area }/> km²
