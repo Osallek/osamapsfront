@@ -1,11 +1,14 @@
+import { Dialog } from '@mui/material';
+import { Breakpoint } from '@mui/system';
 import { LngLat, MapboxGeoJSONFeature, MapSourceDataEvent } from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
 import { useEffect, useRef, useState } from 'react';
 import { Map, MapLayerMouseEvent, MapRef, Popup } from 'react-map-gl';
+import DataDialog from 'screens/dialog/DataDialog';
 import { mapStyle } from 'screens/map/map-style';
 import DataPopup from 'screens/popup/DataPopup';
 import { Commune, Data, Departement, Region } from 'types/api.types';
-import { getAreaExpression, getPopulationExpression } from 'utils/layer.utils';
+import { DataView, MapsLayers } from 'types/maps.types';
 import { flatten } from 'utils/object.utils';
 
 interface MapPageProps {
@@ -18,6 +21,8 @@ function MapPage({ data }: MapPageProps) {
   const [clicked, setClicked] = useState<MapboxGeoJSONFeature | undefined>(undefined);
   const [position, setPosition] = useState<LngLat | undefined>(undefined);
   const [activeData, setActiveData] = useState<Commune | Departement | Region | undefined>(undefined);
+  const [dialog, setDialog] = useState<boolean>(false);
+  const [maxWidth, setMaxWidth] = useState<Breakpoint | false | undefined>(undefined);
   const mapRef = useRef<MapRef>(null);
 
   const onMouseMove = (e: MapLayerMouseEvent) => {
@@ -99,7 +104,7 @@ function MapPage({ data }: MapPageProps) {
   const onSourceData = (e: MapSourceDataEvent) => {
     if (e.isSourceLoaded && e.sourceId === 'decoupageAdministratif') {
       for (const feature of e.target.queryRenderedFeatures(undefined,
-        { layers: ['region_data', 'departement_data', 'commune_data'] })) {
+        { layers: [MapsLayers.REGION_DATA, MapsLayers.DEPARTEMENT_DATA, MapsLayers.COMMUNE_DATA] })) {
 
         if (feature.id && feature.source === 'decoupageAdministratif') {
           if (feature.sourceLayer === 'regions' && data.regions && data.regions[feature.id]) {
@@ -140,29 +145,13 @@ function MapPage({ data }: MapPageProps) {
     } else {
       setPosition(undefined);
       setActiveData(undefined);
+      setDialog(false);
     }
   }, [clicked, data]);
 
   useEffect(() => {
     if (loaded && mapRef.current) {
-      if (data.regions) {
-        // mapRef.current.getMap().setPaintProperty('region_data', 'fill-color', getAreaExpression(data.regions));
-        mapRef.current.getMap().setPaintProperty('region_data', 'fill-color', getPopulationExpression(data.regions, 2020));
-        mapRef.current.getMap().setLayoutProperty('region_data', 'visibility', 'visible');
-        console.log( getPopulationExpression(data.regions, 2020));
-      }
-
-      if (data.departements) {
-        // mapRef.current.getMap().setPaintProperty('departement_data', 'fill-color', getAreaExpression(data.departements));
-        mapRef.current.getMap().setPaintProperty('departement_data', 'fill-color', getPopulationExpression(data.departements, 2020));
-        mapRef.current.getMap().setLayoutProperty('departement_data', 'visibility', 'visible');
-      }
-
-      if (data.communes) {
-        // mapRef.current.getMap().setPaintProperty('commune_data', 'fill-color', getAreaExpression(data.communes));
-        mapRef.current.getMap().setPaintProperty('commune_data', 'fill-color', getPopulationExpression(data.communes, 2020));
-        mapRef.current.getMap().setLayoutProperty('commune_data', 'visibility', 'visible');
-      }
+      DataView.fill(DataView.SATELLITE, data, mapRef.current);
     }
   }, [mapRef, loaded]);
 
@@ -172,8 +161,8 @@ function MapPage({ data }: MapPageProps) {
          mapLib={ maplibregl }
          style={ { height: '100%' } }
          mapStyle={ mapStyle }
-         maxZoom={ 18 }
-         minZoom={ 6 }
+         maxZoom={ 19 }
+         minZoom={ 5 }
          maxBounds={ [[-10, 41.2], [15, 51.45]] }
          initialViewState={ { zoom: 11, latitude: 48.925239263078566, longitude: 2.183056484769497 } }
          renderWorldCopies={ true }
@@ -186,8 +175,15 @@ function MapPage({ data }: MapPageProps) {
       { position && activeData && (
         <Popup longitude={ position.lng } latitude={ position.lat } anchor='bottom' closeOnMove={ false }
                closeOnClick={ false } closeButton={ false } onClose={ e => setClicked(undefined) }>
-          <DataPopup data={ activeData } onClose={ () => setClicked(undefined) }/>
-        </Popup>) }
+          <DataPopup data={ activeData } onClose={ () => setClicked(undefined) } onClick={ () => setDialog(true) }/>
+        </Popup>
+      )
+      }
+      <Dialog open={ dialog && !!activeData } fullWidth maxWidth={ maxWidth }>
+        {
+          activeData && <DataDialog data={ activeData } onClose={ () => setDialog(false) } setMaxWidth={ m => setMaxWidth(m) }/>
+        }
+      </Dialog>
     </Map>
   );
 }

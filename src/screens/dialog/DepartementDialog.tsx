@@ -10,7 +10,7 @@ interface DepartementContentProps {
   onClose?: () => void;
 }
 
-function DepartementContent({ departement, onClose }: DepartementContentProps) {
+function DepartementDialog({ departement, onClose }: DepartementContentProps) {
   const data = useContext(DataContext);
 
   if (!data) {
@@ -62,5 +62,5 @@ function DepartementContent({ departement, onClose }: DepartementContentProps) {
   );
 }
 
-export default DepartementContent;
+export default DepartementDialog;
 

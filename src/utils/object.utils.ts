@@ -1,3 +1,7 @@
+export function onlyUnique(value: any, index: number, array: any[]) {
+  return array.indexOf(value) === index;
+}
+
 export function unflatten(data: any): any {
   if (Object(data) !== data || Array.isArray(data)) {
     return data;

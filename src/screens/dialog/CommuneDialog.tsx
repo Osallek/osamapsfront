@@ -10,7 +10,7 @@ interface CommuneContentProps {
   onClose?: () => void;
 }
 
-function CommuneContent({ commune, onClose }: CommuneContentProps) {
+function CommuneDialog({ commune, onClose }: CommuneContentProps) {
   const data = useContext(DataContext);
 
   if (!data) {
@@ -70,5 +70,5 @@ function CommuneContent({ commune, onClose }: CommuneContentProps) {
   );
 }
 
-export default CommuneContent;
+export default CommuneDialog;
 

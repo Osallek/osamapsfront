@@ -10,7 +10,7 @@ interface RegionContentProps {
   onClose?: () => void;
 }
 
-function RegionContent({ region, onClose }: RegionContentProps) {
+function RegionDialog({ region, onClose }: RegionContentProps) {
   const data = useContext(DataContext);
 
   if (!data) {
@@ -55,5 +55,5 @@ function RegionContent({ region, onClose }: RegionContentProps) {
   );
 }
 
-export default RegionContent;
+export default RegionDialog;
 

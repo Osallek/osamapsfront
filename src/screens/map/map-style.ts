@@ -1,4 +1,5 @@
 import { Style } from 'mapbox-gl';
+import { MapsLayers } from 'types/maps.types';
 
 export const mapStyle: Style = {
   version: 8,
@@ -28,7 +29,7 @@ export const mapStyle: Style = {
   },
   layers: [
     {
-      id: 'satellite',
+      id: MapsLayers.SATELLITE,
       type: 'raster',
       source: 'opendata',
       paint: {
@@ -36,7 +37,7 @@ export const mapStyle: Style = {
       }
     },
     {
-      id: 'region',
+      id: MapsLayers.REGION,
       type: 'fill',
       source: 'decoupageAdministratif',
       'source-layer': 'regions',
@@ -52,7 +53,7 @@ export const mapStyle: Style = {
       }
     },
     {
-      id: 'region_data',
+      id: MapsLayers.REGION_DATA,
       type: 'fill',
       source: 'decoupageAdministratif',
       'source-layer': 'regions',
@@ -65,7 +66,7 @@ export const mapStyle: Style = {
       },
     },
     {
-      id: 'region_line',
+      id: MapsLayers.REGION_LINE,
       type: 'line',
       source: 'decoupageAdministratif',
       'source-layer': 'regions',
@@ -78,7 +79,106 @@ export const mapStyle: Style = {
       }
     },
     {
-      id: 'region_name',
+      id: MapsLayers.DEPARTEMENT,
+      type: 'fill',
+      source: 'decoupageAdministratif',
+      'source-layer': 'departements',
+      minzoom: 8,
+      maxzoom: 11,
+      paint: {
+        'fill-color': 'yellow',
+        'fill-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          0.2,
+          0
+        ]
+      }
+    },
+    {
+      id: MapsLayers.DEPARTEMENT_DATA,
+      type: 'fill',
+      source: 'decoupageAdministratif',
+      'source-layer': 'departements',
+      minzoom: 8,
+      maxzoom: 11,
+      layout: {
+        visibility: 'none',
+      },
+      paint: {
+        'fill-opacity': 0.8
+      },
+    },
+    {
+      id: MapsLayers.DEPARTEMENT_LINE,
+      type: 'line',
+      source: 'decoupageAdministratif',
+      'source-layer': 'departements',
+      minzoom: 8,
+      paint: {
+        'line-color': 'yellow',
+        'line-opacity': 1,
+        'line-width': 1
+      }
+    },
+    {
+      id: MapsLayers.COMMUNE,
+      type: 'fill',
+      source: 'decoupageAdministratif',
+      'source-layer': 'communes',
+      minzoom: 11,
+      maxzoom: 15,
+      filter: [
+        '!has',
+        'commune'
+      ],
+      paint: {
+        'fill-color': 'pink',
+        'fill-opacity': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          0.2,
+          0
+        ]
+      }
+    },
+    {
+      id: MapsLayers.COMMUNE_DATA,
+      type: 'fill',
+      source: 'decoupageAdministratif',
+      'source-layer': 'communes',
+      minzoom: 11,
+      maxzoom: 15,
+      filter: [
+        '!has',
+        'commune'
+      ],
+      layout: {
+        visibility: 'none',
+      },
+      paint: {
+        'fill-opacity': 0.8
+      },
+    },
+    {
+      id: MapsLayers.COMMUNE_LINE,
+      type: 'line',
+      source: 'decoupageAdministratif',
+      'source-layer': 'communes',
+      minzoom: 11,
+      filter: [
+        '!has',
+        'commune'
+      ],
+      paint: {
+        'line-color': 'pink',
+        'line-width': 1.5,
+        'line-opacity': 1,
+        'line-blur': 0
+      }
+    },
+    {
+      id: MapsLayers.REGION_NAME,
       type: 'symbol',
       source: 'openmaptiles',
       'source-layer': 'place',
@@ -122,50 +222,7 @@ export const mapStyle: Style = {
       }
     },
     {
-      id: 'departement',
-      type: 'fill',
-      source: 'decoupageAdministratif',
-      'source-layer': 'departements',
-      minzoom: 8,
-      maxzoom: 11,
-      paint: {
-        'fill-color': 'yellow',
-        'fill-opacity': [
-          'case',
-          ['boolean', ['feature-state', 'hover'], false],
-          0.2,
-          0
-        ]
-      }
-    },
-    {
-      id: 'departement_data',
-      type: 'fill',
-      source: 'decoupageAdministratif',
-      'source-layer': 'departements',
-      minzoom: 8,
-      maxzoom: 11,
-      layout: {
-        visibility: 'none',
-      },
-      paint: {
-        'fill-opacity': 0.8
-      },
-    },
-    {
-      id: 'departement_line',
-      type: 'line',
-      source: 'decoupageAdministratif',
-      'source-layer': 'departements',
-      minzoom: 8,
-      paint: {
-        'line-color': 'yellow',
-        'line-opacity': 1,
-        'line-width': 1
-      }
-    },
-    {
-      id: 'departement_name',
+      id: MapsLayers.DEPARTEMENT_NAME,
       type: 'symbol',
       source: 'openmaptiles',
       'source-layer': 'place',
@@ -213,63 +270,7 @@ export const mapStyle: Style = {
       }
     },
     {
-      id: 'commune',
-      type: 'fill',
-      source: 'decoupageAdministratif',
-      'source-layer': 'communes',
-      minzoom: 11,
-      maxzoom: 15,
-      filter: [
-        '!has',
-        'commune'
-      ],
-      paint: {
-        'fill-color': 'pink',
-        'fill-opacity': [
-          'case',
-          ['boolean', ['feature-state', 'hover'], false],
-          0.2,
-          0
-        ]
-      }
-    },
-    {
-      id: 'commune_data',
-      type: 'fill',
-      source: 'decoupageAdministratif',
-      'source-layer': 'communes',
-      minzoom: 11,
-      maxzoom: 15,
-      filter: [
-        '!has',
-        'commune'
-      ],
-      layout: {
-        visibility: 'none',
-      },
-      paint: {
-        'fill-opacity': 0.8
-      },
-    },
-    {
-      id: 'commune_line',
-      type: 'line',
-      source: 'decoupageAdministratif',
-      'source-layer': 'communes',
-      minzoom: 11,
-      filter: [
-        '!has',
-        'commune'
-      ],
-      paint: {
-        'line-color': 'pink',
-        'line-width': 1.5,
-        'line-opacity': 1,
-        'line-blur': 0
-      }
-    },
-    {
-      id: 'commune_name',
+      id: MapsLayers.COMMUNE_NAME,
       type: 'symbol',
       source: 'openmaptiles',
       'source-layer': 'place',
