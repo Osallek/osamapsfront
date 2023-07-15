@@ -5,8 +5,8 @@ import { Map, MapLayerMouseEvent, MapRef, Popup } from 'react-map-gl';
 import { mapStyle } from 'screens/map/map-style';
 import DataPopup from 'screens/popup/DataPopup';
 import { Commune, Data, Departement, Region } from 'types/api.types';
-import { getGradient } from 'utils/colors.utils';
-import { getAreaExpression } from 'utils/layer.utils';
+import { getAreaExpression, getPopulationExpression } from 'utils/layer.utils';
+import { flatten } from 'utils/object.utils';
 
 interface MapPageProps {
   data: Data;
@@ -103,11 +103,11 @@ function MapPage({ data }: MapPageProps) {
 
         if (feature.id && feature.source === 'decoupageAdministratif') {
           if (feature.sourceLayer === 'regions' && data.regions && data.regions[feature.id]) {
-            e.target.setFeatureState(feature, { ...feature.state , ...data.regions[feature.id] });
+            e.target.setFeatureState(feature, flatten({ ...feature.state, ...data.regions[feature.id] }));
           } else if (feature.sourceLayer === 'departements' && data.departements && data.departements[feature.id]) {
-            e.target.setFeatureState(feature, { ...feature.state, ...data.departements[feature.id] });
+            e.target.setFeatureState(feature, flatten({ ...feature.state, ...data.departements[feature.id] }));
           } else if (feature.sourceLayer === 'communes' && data.communes && data.communes[feature.id]) {
-            e.target.setFeatureState(feature, { ...feature.state, ...data.communes[feature.id] });
+            e.target.setFeatureState(feature, flatten({ ...feature.state, ...data.communes[feature.id] }));
           }
         }
 
@@ -146,17 +146,21 @@ function MapPage({ data }: MapPageProps) {
   useEffect(() => {
     if (loaded && mapRef.current) {
       if (data.regions) {
-        mapRef.current.getMap().setPaintProperty('region_data', 'fill-color', getAreaExpression(data.regions));
+        // mapRef.current.getMap().setPaintProperty('region_data', 'fill-color', getAreaExpression(data.regions));
+        mapRef.current.getMap().setPaintProperty('region_data', 'fill-color', getPopulationExpression(data.regions, 2020));
         mapRef.current.getMap().setLayoutProperty('region_data', 'visibility', 'visible');
+        console.log( getPopulationExpression(data.regions, 2020));
       }
 
       if (data.departements) {
-        mapRef.current.getMap().setPaintProperty('departement_data', 'fill-color', getAreaExpression(data.departements));
+        // mapRef.current.getMap().setPaintProperty('departement_data', 'fill-color', getAreaExpression(data.departements));
+        mapRef.current.getMap().setPaintProperty('departement_data', 'fill-color', getPopulationExpression(data.departements, 2020));
         mapRef.current.getMap().setLayoutProperty('departement_data', 'visibility', 'visible');
       }
 
       if (data.communes) {
-        mapRef.current.getMap().setPaintProperty('commune_data', 'fill-color', getAreaExpression(data.communes));
+        // mapRef.current.getMap().setPaintProperty('commune_data', 'fill-color', getAreaExpression(data.communes));
+        mapRef.current.getMap().setPaintProperty('commune_data', 'fill-color', getPopulationExpression(data.communes, 2020));
         mapRef.current.getMap().setLayoutProperty('commune_data', 'visibility', 'visible');
       }
     }

@@ -33,7 +33,7 @@ function DepartementContent({ departement, onClose }: DepartementContentProps) {
           <Grid item>
             <Typography variant='body2'>
               <FormattedMessage
-                id='departement.chefLieu'/> : { `${ data.communes[departement.chefLieu].name } (${ departement.chefLieu })` }
+                id='departement.chefLieu'/> : { `${ data.communes[departement.chefLieu].name } ${ data.communes[departement.chefLieu].zipCode ? `(${ data.communes[departement.chefLieu].zipCode })` : '' }` }
             </Typography>
           </Grid>
           {

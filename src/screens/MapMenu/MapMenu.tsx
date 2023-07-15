@@ -38,10 +38,6 @@ function MapMenu({ data }: MapMenuProps) {
   const [open, setOpen] = useState<boolean>(false);
   const { main } = useMap();
 
-  if (card.current) {
-    console.log(card.current.clientWidth);
-  }
-
   return (
     <>
       <Drawer

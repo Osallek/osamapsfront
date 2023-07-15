@@ -26,7 +26,7 @@ function RegionContent({ region, onClose }: RegionContentProps) {
           <Grid item>
             <Typography variant='body2'>
               <FormattedMessage
-                id='region.chefLieu'/> : { `${ data.communes[region.chefLieu].name } (${ region.chefLieu })` }
+                id='region.chefLieu'/> : { `${ data.communes[region.chefLieu].name } ${ data.communes[region.chefLieu].zipCode ? `(${ data.communes[region.chefLieu].zipCode })` : '' }` }
             </Typography>
           </Grid>
           {
