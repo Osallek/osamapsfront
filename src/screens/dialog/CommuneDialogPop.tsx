@@ -54,7 +54,7 @@ function CommuneDialogPop({ commune, setMaxWidth }: CommuneContentPopProps) {
                       </div>
                     ) : undefined;
                   } }/>
-                  <Line type='bumpX' dataKey='pop' stroke='#8884d8' connectNulls strokeWidth={ 2 } activeDot={ { r: 6 } }/>
+                  <Line type='bumpX' dataKey='pop' stroke='#8884d8' connectNulls strokeWidth={ 2 } activeDot={ { r: 6 } } isAnimationActive={ false }/>
                 </LineChart>
               </Grid>
             }

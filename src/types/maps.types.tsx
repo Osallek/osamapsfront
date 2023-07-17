@@ -46,38 +46,38 @@ export namespace DataView {
 
       case DataView.AREA_COMMUNE:
         zoomCommune(map);
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data, Level.COMMUNE));
-        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getAreaExpression(data, Level.REGION));
+        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data.communes.jenks));
+        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getAreaExpression(data.regions.jenks));
         break;
 
       case DataView.AREA_DEPARTEMENT:
         zoomDepartement(map);
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data, Level.COMMUNE));
-        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getAreaExpression(data, Level.DEPARTEMENT));
+        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data.communes.jenks));
+        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getAreaExpression(data.departements.jenks));
         break;
 
       case DataView.AREA_REGION:
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data, Level.COMMUNE));
-        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getAreaExpression(data, Level.DEPARTEMENT));
-        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getAreaExpression(data, Level.REGION));
+        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data.communes.jenks));
+        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getAreaExpression(data.departements.jenks));
+        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getAreaExpression(data.regions.jenks));
         break;
 
       case DataView.POPULATION_COMMUNE:
         zoomCommune(map);
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getPopulationExpression(data, Level.COMMUNE, extra.year));
-        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getPopulationExpression(data, Level.REGION, extra.year));
+        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getPopulationExpression(data.communes.jenks, extra.year));
+        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getPopulationExpression(data.regions.jenks, extra.year));
         break;
 
       case DataView.POPULATION_DEPARTEMENT:
         zoomDepartement(map);
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getPopulationExpression(data, Level.COMMUNE, extra.year));
-        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getPopulationExpression(data, Level.DEPARTEMENT, extra.year));
+        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getPopulationExpression(data.communes.jenks, extra.year));
+        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getPopulationExpression(data.departements.jenks, extra.year));
         break;
 
       case DataView.POPULATION_REGION:
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getPopulationExpression(data, Level.COMMUNE, extra.year));
-        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getPopulationExpression(data, Level.DEPARTEMENT, extra.year));
-        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getPopulationExpression(data, Level.REGION, extra.year));
+        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getPopulationExpression(data.communes.jenks, extra.year));
+        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getPopulationExpression(data.departements.jenks, extra.year));
+        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getPopulationExpression(data.regions.jenks, extra.year));
         break;
     }
   }
@@ -92,8 +92,8 @@ export namespace DataView {
       case DataView.POPULATION_COMMUNE:
       case DataView.POPULATION_DEPARTEMENT:
       case DataView.POPULATION_REGION:
-        const years = Object.values(data.regions).filter(c => c.population !== undefined).map(c => Object.keys(c.population)).flat()
-          .filter(onlyUnique).sort().reverse();
+        const years = Object.values(data.regions.regions).filter(c => !!c.population && !!c.population.population)
+          .map(c => Object.keys(c.population.population)).flat().filter(onlyUnique).sort().reverse();
 
         if (years.length === 0) {
           return <></>;

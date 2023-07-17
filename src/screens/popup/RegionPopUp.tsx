@@ -26,15 +26,15 @@ function RegionPopUp({ region, onClose }: RegionContentProps) {
           <Grid item>
             <Typography variant='body2'>
               <FormattedMessage
-                id='region.chefLieu'/> : { `${ data.communes[region.chefLieu].name } ${ data.communes[region.chefLieu].zipCode ? `(${ data.communes[region.chefLieu].zipCode })` : '' }` }
+                id='region.chefLieu'/> : { `${ data.communes.communes[region.chefLieu].name } ${ data.communes.communes[region.chefLieu].zipCode ? `(${ data.communes.communes[region.chefLieu].zipCode })` : '' }` }
             </Typography>
           </Grid>
           {
             region.population && (
               <Grid item>
                 <Typography variant='body2'>
-                  <FormattedMessage id='region.population' values={ { year: Object.keys(region.population).slice(-1)[0] } }/> : <FormattedNumber
-                  value={ Object.values(region.population).slice(-1)[0] }/>
+                  <FormattedMessage id='region.population' values={ { year: Object.keys(region.population.population).slice(-1)[0] } }/> : <FormattedNumber
+                  value={ Object.values(region.population.population).slice(-1)[0] }/>
                 </Typography>
               </Grid>
             )

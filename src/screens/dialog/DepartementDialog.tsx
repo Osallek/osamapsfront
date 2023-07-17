@@ -27,21 +27,21 @@ function DepartementDialog({ departement, onClose }: DepartementContentProps) {
           <Grid item>
             <Typography variant='body2'>
               <FormattedMessage
-                id='departement.region'/> : { `${ data.regions[departement.region].name } (${ departement.region })` }
+                id='departement.region'/> : { `${ data.regions.regions[departement.region].name } (${ departement.region })` }
             </Typography>
           </Grid>
           <Grid item>
             <Typography variant='body2'>
               <FormattedMessage
-                id='departement.chefLieu'/> : { `${ data.communes[departement.chefLieu].name } ${ data.communes[departement.chefLieu].zipCode ? `(${ data.communes[departement.chefLieu].zipCode })` : '' }` }
+                id='departement.chefLieu'/> : { `${ data.communes.communes[departement.chefLieu].name } ${ data.communes.communes[departement.chefLieu].zipCode ? `(${ data.communes.communes[departement.chefLieu].zipCode })` : '' }` }
             </Typography>
           </Grid>
           {
             departement.population && (
               <Grid item>
                 <Typography variant='body2'>
-                  <FormattedMessage id='departement.population' values={ { year: Object.keys(departement.population).slice(-1)[0] } }/> : <FormattedNumber
-                  value={ Object.values(departement.population).slice(-1)[0] }/>
+                  <FormattedMessage id='departement.population' values={ { year: Object.keys(departement.population.population).slice(-1)[0] } }/> : <FormattedNumber
+                  value={ Object.values(departement.population.population).slice(-1)[0] }/>
                 </Typography>
               </Grid>
             )

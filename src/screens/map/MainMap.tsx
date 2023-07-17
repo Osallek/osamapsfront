@@ -107,12 +107,12 @@ function MapPage({ data }: MapPageProps) {
         { layers: [MapsLayers.REGION_DATA, MapsLayers.DEPARTEMENT_DATA, MapsLayers.COMMUNE_DATA] })) {
 
         if (feature.id && feature.source === 'decoupageAdministratif') {
-          if (feature.sourceLayer === 'regions' && data.regions && data.regions[feature.id]) {
-            e.target.setFeatureState(feature, flatten({ ...feature.state, ...data.regions[feature.id] }));
-          } else if (feature.sourceLayer === 'departements' && data.departements && data.departements[feature.id]) {
-            e.target.setFeatureState(feature, flatten({ ...feature.state, ...data.departements[feature.id] }));
-          } else if (feature.sourceLayer === 'communes' && data.communes && data.communes[feature.id]) {
-            e.target.setFeatureState(feature, flatten({ ...feature.state, ...data.communes[feature.id] }));
+          if (feature.sourceLayer === 'regions' && data.regions && data.regions.regions[feature.id]) {
+            e.target.setFeatureState(feature, flatten({ ...feature.state, ...data.regions.regions[feature.id] }));
+          } else if (feature.sourceLayer === 'departements' && data.departements && data.departements.departements[feature.id]) {
+            e.target.setFeatureState(feature, flatten({ ...feature.state, ...data.departements.departements[feature.id] }));
+          } else if (feature.sourceLayer === 'communes' && data.communes && data.communes.communes[feature.id]) {
+            e.target.setFeatureState(feature, flatten({ ...feature.state, ...data.communes.communes[feature.id] }));
           }
         }
 
@@ -124,20 +124,20 @@ function MapPage({ data }: MapPageProps) {
     if (clicked && clicked.id && data) {
       switch (clicked.layer.id) {
         case 'region': {
-          if (data.regions[clicked.id]) {
-            setActiveData(data.regions[clicked.id]);
+          if (data.regions.regions[clicked.id]) {
+            setActiveData(data.regions.regions[clicked.id]);
           }
           break;
         }
         case 'departement': {
-          if (data.departements[clicked.id]) {
-            setActiveData(data.departements[clicked.id]);
+          if (data.departements.departements[clicked.id]) {
+            setActiveData(data.departements.departements[clicked.id]);
           }
           break;
         }
         case 'commune': {
-          if (data.communes[clicked.id]) {
-            setActiveData(data.communes[clicked.id]);
+          if (data.communes.communes[clicked.id]) {
+            setActiveData(data.communes.communes[clicked.id]);
           }
           break;
         }

@@ -1,7 +1,7 @@
 export type Data = {
-  communes: Record<string, Commune>;
-  departements: Record<string, Departement>;
-  regions: Record<string, Region>;
+  communes: Communes;
+  departements: Departements;
+  regions: Regions;
 }
 
 export type IdName<I, N> = {
@@ -9,24 +9,59 @@ export type IdName<I, N> = {
   name: N;
 }
 
-export type DataNode = IdName<string, string> & {
+export type DataNodes = {
   level: Level;
-  area: number;
-  population: Record<number, number>;
+  jenks: DataJenks;
 }
 
-export type Commune = DataNode & {
+export type DataJenks = {
+  population: Record<number, Array<number>>;
+  area: Array<number>;
+}
+
+export type Communes = DataNodes & {
+  communes: Record<string, Commune>;
+}
+
+export type Departements = DataNodes & {
+  departements: Record<string, Departement>;
+}
+
+export type Regions = DataNodes & {
+  regions: Record<string, Region>;
+}
+
+export type DataNode<P extends DataPopulations> = IdName<string, string> & {
+  level: Level;
+  area: number;
+  population: P;
+}
+
+export type DataPopulations = {
+  population: Record<number, number>;
+  countryRanks: Record<number, number>;
+}
+
+export type DepartementPopulations = DataPopulations & {
+  regionRanks: Record<number, number>;
+}
+
+export type CommunePopulations = DepartementPopulations & {
+  communeRanks: Record<number, number>;
+}
+
+export type Commune = DataNode<CommunePopulations> & {
   departement: string;
   zipCode: string;
 }
 
-export type Departement = DataNode & {
+export type Departement = DataNode<DepartementPopulations> & {
   chefLieu: string;
   region: string;
   communes: Array<string>;
 }
 
-export type Region = DataNode & {
+export type Region = DataNode<DataPopulations> & {
   chefLieu: string;
   departements: Array<string>;
 }

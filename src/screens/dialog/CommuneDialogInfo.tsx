@@ -37,15 +37,15 @@ function CommuneDialog({ commune, setMaxWidth }: CommuneContentProps) {
         <Grid item>
           <Typography variant="body2">
             <FormattedMessage
-              id="commune.departement"/> : { `${ data.departements[commune.departement].name } (${ commune.departement })` }
+              id="commune.departement"/> : { `${ data.departements.departements[commune.departement].name } (${ commune.departement })` }
           </Typography>
         </Grid>
         {
           commune.population && (
             <Grid item>
               <Typography variant='body2'>
-                <FormattedMessage id='commune.population' values={ { year: Object.keys(commune.population).slice(-1)[0] } }/> : <FormattedNumber
-                value={ Object.values(commune.population).slice(-1)[0] }/>
+                <FormattedMessage id='commune.population' values={ { year: Object.keys(commune.population.population).slice(-1)[0] } }/> : <FormattedNumber
+                value={ Object.values(commune.population.population).slice(-1)[0] }/>
               </Typography>
             </Grid>
           )
