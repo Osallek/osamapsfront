@@ -33,8 +33,9 @@ export type Regions = DataNodes & {
 
 export type DataNode<P extends DataPopulations> = IdName<string, string> & {
   level: Level;
-  area: number;
+  area?: number;
   population: P;
+  areaCountryRanks?: number;
 }
 
 export type DataPopulations = {
@@ -53,12 +54,15 @@ export type CommunePopulations = DepartementPopulations & {
 export type Commune = DataNode<CommunePopulations> & {
   departement: string;
   zipCode: string;
+  areaRegionRanks?: number;
+  areaDepartementRanks?: number;
 }
 
 export type Departement = DataNode<DepartementPopulations> & {
   chefLieu: string;
   region: string;
   communes: Array<string>;
+  areaRegionRanks?: number;
 }
 
 export type Region = DataNode<DataPopulations> & {
