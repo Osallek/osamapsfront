@@ -8,10 +8,21 @@ export function popLine(node: DataNode<DataPopulations>): Array<any> {
   return Object.entries(node.population.population).map(([year, pop]) => ({ year: year, pop: pop }));
 }
 
-export function popRankLine(node: Record<number, number>): Array<any> {
-  if (!node || Object.keys(node).length === 0) {
+export function popRankLine(nodes: Array<Record<number, number>>): Array<any> {
+  if (!nodes || Object.keys(nodes).length === 0) {
     return [];
   }
 
-  return Object.entries(node).map(([year, pop]) => ({ year: year, pop: pop }));
+  const data: Array<any> = [];
+
+  for (const year of Object.keys(nodes[0])) {
+    const d: any = { year };
+    for (let i = 0; i < nodes.length; i++) {
+      d['data' + i] = nodes[i][Number(year)];
+    }
+
+    data.push(d);
+  }
+
+  return data;
 }

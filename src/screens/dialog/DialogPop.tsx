@@ -2,15 +2,17 @@ import { CardContent, Grid, Typography } from '@mui/material';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import AutoSizer, { HorizontalSize } from 'react-virtualized-auto-sizer';
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, XAxis, YAxis, YAxisProps } from 'recharts';
 
 interface YearDialogPopProps {
   data: Array<any>;
   legend?: string;
   tooltip?: React.ReactNode;
+  yAxis?: Array<YAxisProps>;
+  lines?: Array<any>;
 }
 
-function YearDialogPop({ data, legend, tooltip }: YearDialogPopProps) {
+function YearDialogPop({ data, legend, tooltip, yAxis = [{ dataKey: 'pop' }], lines = [{ dataKey: 'pop' }] }: YearDialogPopProps) {
   const intl = useIntl();
 
   return (
@@ -39,13 +41,20 @@ function YearDialogPop({ data, legend, tooltip }: YearDialogPopProps) {
                 >
                   <CartesianGrid strokeDasharray='3 3'/>
                   <XAxis dataKey='year' type='number' domain={ ['dataMin', 'dataMax'] } ticks={ data.map(v => v.year) }/>
-                  <YAxis dataKey='pop' tickFormatter={ (value) => intl.formatNumber(value) }/>
+                  {
+                    yAxis &&
+                    yAxis.map(v => <YAxis tickFormatter={ (value) => intl.formatNumber(value) } allowDecimals={ false } { ...v } />)
+                  }
                   {
                     tooltip && (
                       tooltip
                     )
                   }
-                  <Line type='bumpX' dataKey='pop' stroke='#8884d8' connectNulls strokeWidth={ 2 } activeDot={ { r: 6 } } isAnimationActive={ false }/>
+                  {
+                    lines &&
+                    lines.map(
+                      v => <Line type='bumpX' stroke='#8884d8' connectNulls strokeWidth={ 2 } activeDot={ { r: 6 } } isAnimationActive={ false } { ...v }/>)
+                  }
                 </LineChart>
               </Grid>
             }

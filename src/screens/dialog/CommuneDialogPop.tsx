@@ -26,7 +26,7 @@ function CommuneDialogPop({ commune, setMaxWidth }: CommuneContentPopProps) {
   }, [commune]);
 
   return (
-    <DialogPop data={ data } legend='common.pop.history'
+    <DialogPop data={ data }
                tooltip={ <Tooltip content={ ({ active, payload, label }) => {
                  return active ? (
                    <div>

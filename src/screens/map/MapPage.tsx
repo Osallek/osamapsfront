@@ -14,10 +14,12 @@ function MapPage() {
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await api.data.get();
-      setData(data);
-
-      setLoading(false);
+      try {
+        const { data } = await api.data.get();
+        setData(data);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 

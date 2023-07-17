@@ -48,7 +48,7 @@ export type DepartementPopulations = DataPopulations & {
 }
 
 export type CommunePopulations = DepartementPopulations & {
-  communeRanks: Record<number, number>;
+  departementRanks: Record<number, number>;
 }
 
 export type Commune = DataNode<CommunePopulations> & {

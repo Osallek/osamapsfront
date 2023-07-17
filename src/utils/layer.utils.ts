@@ -19,8 +19,6 @@ function getExpression(breaks: Array<number>, stateField: string): Array<any> {
     }
   }
 
-  console.log(expression);
-
   return expression;
 }
 
