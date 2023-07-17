@@ -5,15 +5,15 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import AutoSizer, { HorizontalSize } from 'react-virtualized-auto-sizer';
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import DialogPop from 'screens/dialog/DialogPop';
-import { Commune } from 'types/api.types';
+import { Departement } from 'types/api.types';
 import { popLine } from 'utils/chart.utils';
 
-interface CommuneContentPopProps {
-  commune: Commune;
+interface DepartementDialogPopProps {
+  departement: Departement;
   setMaxWidth?: (m: Breakpoint | false | undefined) => void;
 }
 
-function CommuneDialogPop({ commune, setMaxWidth }: CommuneContentPopProps) {
+function DepartementDialogPop({ departement, setMaxWidth }: DepartementDialogPopProps) {
   const intl = useIntl();
   const [data, setData] = useState<Array<any>>([]);
 
@@ -22,8 +22,8 @@ function CommuneDialogPop({ commune, setMaxWidth }: CommuneContentPopProps) {
   }
 
   useEffect(() => {
-    setData(popLine(commune));
-  }, [commune]);
+    setData(popLine(departement));
+  }, [departement]);
 
   return (
     <DialogPop data={ data } legend='common.pop.history'
@@ -37,5 +37,5 @@ function CommuneDialogPop({ commune, setMaxWidth }: CommuneContentPopProps) {
   );
 }
 
-export default CommuneDialogPop;
+export default DepartementDialogPop;
 

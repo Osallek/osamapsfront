@@ -39,11 +39,15 @@ function RegionPopUp({ region, onClose }: RegionContentProps) {
               </Grid>
             )
           }
-          <Grid item>
-            <Typography variant='body2'>
-              <FormattedMessage id='region.area'/> : <FormattedNumber value={ region.area }/> km²
-            </Typography>
-          </Grid>
+          {
+            region.area && (
+              <Grid item>
+                <Typography variant='body2'>
+                  <FormattedMessage id='region.area'/> : <FormattedNumber value={ region.area }/> km²
+                </Typography>
+              </Grid>
+            )
+          }
           <Grid item>
             <Typography variant='body2'>
               <FormattedMessage id='region.code'/> : { region.id }

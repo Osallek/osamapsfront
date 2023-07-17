@@ -40,17 +40,22 @@ function DepartementPopUp({ departement, onClose }: DepartementContentProps) {
             departement.population && (
               <Grid item>
                 <Typography variant='body2'>
-                  <FormattedMessage id='departement.population' values={ { year: Object.keys(departement.population.population).slice(-1)[0] } }/> : <FormattedNumber
+                  <FormattedMessage id='departement.population'
+                                    values={ { year: Object.keys(departement.population.population).slice(-1)[0] } }/> : <FormattedNumber
                   value={ Object.values(departement.population.population).slice(-1)[0] }/>
                 </Typography>
               </Grid>
             )
           }
-          <Grid item>
-            <Typography variant='body2'>
-              <FormattedMessage id='departement.area'/> : <FormattedNumber value={ departement.area }/> km²
-            </Typography>
-          </Grid>
+          {
+            departement.area && (
+              <Grid item>
+                <Typography variant='body2'>
+                  <FormattedMessage id='departement.area'/> : <FormattedNumber value={ departement.area }/> km²
+                </Typography>
+              </Grid>
+            )
+          }
           <Grid item>
             <Typography variant='body2'>
               <FormattedMessage id='departement.code'/> : { departement.id }

@@ -1,6 +1,6 @@
 import { Menu } from '@mui/icons-material';
 import {
-  Card, CardContent, CardHeader, Drawer, FormControl, FormControlLabel, FormLabel, Grid, IconButton, IconButtonProps, Radio, RadioGroup, styled
+  Card, CardContent, Drawer, FormControl, FormControlLabel, FormLabel, Grid, IconButton, IconButtonProps, Radio, RadioGroup, styled
 } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -70,7 +70,6 @@ function MapMenu({ data }: MapMenuProps) {
         open={ open }
       >
         <Card ref={ card } sx={ { position: 'absolute', zIndex: 2, paddingLeft: 2, paddingRight: 2, minHeight: '100vh' } }>
-          <CardHeader title="Menu" sx={ { padding: 1 } }/>
           <CardContent sx={ { padding: 1 } }>
             <FormControl>
               <FormLabel><FormattedMessage id='view.view'/></FormLabel>
