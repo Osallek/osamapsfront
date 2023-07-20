@@ -1,5 +1,4 @@
 import { CardContent, Grid, Typography } from '@mui/material';
-import { Breakpoint } from '@mui/system';
 import { useContext } from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { DataContext } from 'screens/map/MapPage';
@@ -7,18 +6,13 @@ import { Region } from 'types/api.types';
 
 interface RegionDialogInfoProps {
   region: Region;
-  setMaxWidth?: (m: Breakpoint | false | undefined) => void;
 }
 
-function RegionDialogInfo({ region, setMaxWidth }: RegionDialogInfoProps) {
+function RegionDialogInfo({ region }: RegionDialogInfoProps) {
   const data = useContext(DataContext);
 
   if (!data) {
     return <></>;
-  }
-
-  if (setMaxWidth) {
-    setMaxWidth(undefined);
   }
 
   return (
@@ -31,11 +25,21 @@ function RegionDialogInfo({ region, setMaxWidth }: RegionDialogInfoProps) {
           </Typography>
         </Grid>
         {
-          region.population && (
+          region.population && region.population.population && (
             <Grid item>
               <Typography variant='body2'>
                 <FormattedMessage id='region.population' values={ { year: Object.keys(region.population.population).slice(-1)[0] } }/> : <FormattedNumber
                 value={ Object.values(region.population.population).slice(-1)[0] }/>
+              </Typography>
+            </Grid>
+          )
+        }
+        {
+          region.population && region.population.density && (
+            <Grid item>
+              <Typography variant='body2'>
+                <FormattedMessage id='region.density' values={ { year: Object.keys(region.population.density).slice(-1)[0] } }/> : <FormattedNumber
+                value={ Object.values(region.population.density).slice(-1)[0] }/> habitants/km²
               </Typography>
             </Grid>
           )

@@ -43,7 +43,7 @@ export const mapStyle: Style = {
       'source-layer': 'regions',
       maxzoom: 8,
       paint: {
-        'fill-color': 'black',
+        'fill-color': 'white',
         'fill-opacity': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
@@ -74,8 +74,9 @@ export const mapStyle: Style = {
         'line-join': 'bevel'
       },
       paint: {
-        'line-color': 'black',
-        'line-width': 1.5
+        'line-color': 'white',
+        'line-width': 1.5,
+        'line-opacity': 0.7,
       }
     },
     {
@@ -86,7 +87,7 @@ export const mapStyle: Style = {
       minzoom: 8,
       maxzoom: 11,
       paint: {
-        'fill-color': 'yellow',
+        'fill-color': 'white',
         'fill-opacity': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
@@ -116,9 +117,9 @@ export const mapStyle: Style = {
       'source-layer': 'departements',
       minzoom: 8,
       paint: {
-        'line-color': 'yellow',
-        'line-opacity': 1,
-        'line-width': 1
+        'line-color': 'white',
+        'line-width': 1.5,
+        'line-opacity': 0.7,
       }
     },
     {
@@ -133,7 +134,7 @@ export const mapStyle: Style = {
         'commune'
       ],
       paint: {
-        'fill-color': 'pink',
+        'fill-color': 'white',
         'fill-opacity': [
           'case',
           ['boolean', ['feature-state', 'hover'], false],
@@ -171,10 +172,9 @@ export const mapStyle: Style = {
         'commune'
       ],
       paint: {
-        'line-color': 'pink',
+        'line-color': 'white',
         'line-width': 1.5,
-        'line-opacity': 1,
-        'line-blur': 0
+        'line-opacity': 0.7,
       }
     },
     {
@@ -203,21 +203,21 @@ export const mapStyle: Style = {
           base: 1.6,
           stops: [
             [
-              12,
-              14
+              1,
+              11
             ],
             [
-              15,
-              17
-            ]
+              7,
+              15
+            ],
           ]
         },
         'text-transform': 'uppercase',
         visibility: 'visible'
       },
       'paint': {
-        'text-color': 'black',
-        'text-halo-color': 'rgba(255,255,255,0.8)',
+        'text-color': 'white',
+        'text-halo-color': 'rgba(0,0,0,0.8)',
         'text-halo-width': 1.2
       }
     },
@@ -237,8 +237,8 @@ export const mapStyle: Style = {
           'town'
         ],
         [
-          "<=",
-          "rank",
+          '<=',
+          'rank',
           11
         ],
       ],
@@ -253,19 +253,19 @@ export const mapStyle: Style = {
           stops: [
             [
               7,
-              14
+              10
             ],
             [
               11,
-              24
+              20
             ]
           ]
         },
         visibility: 'visible'
       },
       'paint': {
-        'text-color': 'black',
-        'text-halo-color': 'rgba(255,255,255,0.8)',
+        'text-color': 'white',
+        'text-halo-color': 'rgba(0,0,0,0.8)',
         'text-halo-width': 1.2
       }
     },
@@ -297,20 +297,20 @@ export const mapStyle: Style = {
           stops: [
             [
               7,
-              14
+              10
             ],
             [
               11,
-              24
+              20
             ]
           ]
         },
         visibility: 'visible'
       },
       'paint': {
-        'text-color': 'black',
-        'text-halo-color': 'rgba(255,255,255,0.8)',
-        'text-halo-width': 1.2
+        'text-color': 'white',
+        'text-halo-color': 'rgba(0,0,0,0.8)',
+        'text-halo-width': 1.2,
       }
     },
   ]

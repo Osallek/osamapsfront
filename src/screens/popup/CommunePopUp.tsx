@@ -51,6 +51,16 @@ function CommunePopUp({ commune, onClose }: CommuneContentProps) {
             )
           }
           {
+            commune.population && commune.population.density && (
+              <Grid item>
+                <Typography variant='body2'>
+                  <FormattedMessage id='commune.density' values={ { year: Object.keys(commune.population.density).slice(-1)[0] } }/> : <FormattedNumber
+                  value={ Object.values(commune.population.density).slice(-1)[0] }/> habitants/km²
+                </Typography>
+              </Grid>
+            )
+          }
+          {
             commune.area && (
               <Grid item>
                 <Typography variant="body2">

@@ -40,6 +40,16 @@ function RegionPopUp({ region, onClose }: RegionContentProps) {
             )
           }
           {
+            region.population && region.population.density && (
+              <Grid item>
+                <Typography variant='body2'>
+                  <FormattedMessage id='region.density' values={ { year: Object.keys(region.population.density).slice(-1)[0] } }/> : <FormattedNumber
+                  value={ Object.values(region.population.density).slice(-1)[0] }/> habitants/km²
+                </Typography>
+              </Grid>
+            )
+          }
+          {
             region.area && (
               <Grid item>
                 <Typography variant='body2'>

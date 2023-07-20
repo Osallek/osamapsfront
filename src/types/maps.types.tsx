@@ -2,8 +2,8 @@ import { Autocomplete, TextField } from '@mui/material';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { MapRef } from 'react-map-gl';
-import { Data, Level } from 'types/api.types';
-import { getAreaExpression, getPopulationExpression } from 'utils/layer.utils';
+import { Commune, CommunePopulations, Data, Departement, DepartementPopulations, Level, Region } from 'types/api.types';
+import { getAreaExpression, getDensityExpression, getPopulationExpression } from 'utils/layer.utils';
 import { onlyUnique } from 'utils/object.utils';
 
 export enum MapsLayers {
@@ -22,76 +22,127 @@ export enum MapsLayers {
   COMMUNE_NAME = 'commune_name',
 }
 
+export enum DataLevel {
+  DEPARTEMENT = 'DEPARTEMENT',
+  REGION = 'REGION',
+  COUNTRY = 'COUNTRY',
+}
+
+export namespace DataLevel {
+
+  export function getRank(level: DataLevel, node: Region | Departement | Commune): Record<number, number> {
+    switch (level) {
+      case DataLevel.COUNTRY:
+        return node.population.countryRanks;
+      case DataLevel.REGION:
+        return (node.population as DepartementPopulations).regionRanks;
+      case DataLevel.DEPARTEMENT:
+        return (node.population as CommunePopulations).departementRanks;
+    }
+  }
+
+  export function getDensityRank(level: DataLevel, node: Region | Departement | Commune): Record<number, number> {
+    switch (level) {
+      case DataLevel.COUNTRY:
+        return node.population.densityCountryRanks;
+      case DataLevel.REGION:
+        return (node.population as DepartementPopulations).densityRegionRanks;
+      case DataLevel.DEPARTEMENT:
+        return (node.population as CommunePopulations).densityDepartementRanks;
+    }
+  }
+
+  export function getRankLength(level: DataLevel, node: Region | Departement | Commune, data: Data): number {
+    if ((node as Commune).departement) {
+      switch (level) {
+        case DataLevel.COUNTRY:
+          return Object.keys(data.communes.communes).length;
+
+        case DataLevel.REGION:
+          if (data && data.regions && data.regions.regions && data.departements && data.departements.departements) {
+            const departement: Departement | undefined = data.departements.departements[(node as Commune).departement];
+
+            if (departement && departement.region && data.regions.regions[departement.region]) {
+              return data.regions.regions[departement.region].departements.map(d => data.departements.departements[d]).filter(d => d !== undefined)
+                .map(d => d.communes.length).reduce((acc, v) => {return acc + v}, 0);
+            }
+          }
+          break;
+
+        case DataLevel.DEPARTEMENT:
+          if (data && data.departements && data.departements.departements && data.departements.departements[(node as Commune).departement]) {
+            return data.departements.departements[(node as Commune).departement].communes.length;
+          }
+          break;
+      }
+    } else if ((node as Departement).region) {
+      switch (level) {
+        case DataLevel.REGION:
+          if (data && data.regions && data.regions.regions && data.regions.regions[(node as Departement).region]) {
+            return data.regions.regions[(node as Departement).region].departements.length;
+          }
+          break;
+
+        case DataLevel.COUNTRY:
+          return Object.keys(data.departements.departements).length;
+      }
+    } else if ((node as Region).departements) {
+      switch (level) {
+        case DataLevel.COUNTRY:
+          return Object.keys(data.regions.regions).length;
+      }
+    }
+
+    return 0;
+  }
+}
+
 export enum DataView {
   SATELLITE,
-  AREA_REGION,
-  AREA_DEPARTEMENT,
-  AREA_COMMUNE,
-  POPULATION_REGION,
-  POPULATION_DEPARTEMENT,
-  POPULATION_COMMUNE,
+  AREA,
+  POPULATION,
+  DENSITY,
 }
 
 export namespace DataView {
 
-  export function fill(layer: DataView, data: Data, map: MapRef, extra?: any): void {
-    resetZooms(map);
+  export function fill(view: DataView, level: Level, data: Data, map: MapRef, extra?: any): void {
+    resetZooms(map, view, level);
 
-    switch (layer) {
+    switch (view) {
       case DataView.SATELLITE:
         map.getMap().setLayoutProperty(MapsLayers.COMMUNE_DATA, 'visibility', 'none');
         map.getMap().setLayoutProperty(MapsLayers.DEPARTEMENT_DATA, 'visibility', 'none');
         map.getMap().setLayoutProperty(MapsLayers.REGION_DATA, 'visibility', 'none');
         break;
 
-      case DataView.AREA_COMMUNE:
-        zoomCommune(map);
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data.communes.jenks));
-        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getAreaExpression(data.regions.jenks));
-        break;
-
-      case DataView.AREA_DEPARTEMENT:
-        zoomDepartement(map);
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data.communes.jenks));
-        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getAreaExpression(data.departements.jenks));
-        break;
-
-      case DataView.AREA_REGION:
+      case DataView.AREA:
         map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data.communes.jenks));
         map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getAreaExpression(data.departements.jenks));
         map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getAreaExpression(data.regions.jenks));
         break;
 
-      case DataView.POPULATION_COMMUNE:
-        zoomCommune(map);
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getPopulationExpression(data.communes.jenks, extra.year));
-        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getPopulationExpression(data.regions.jenks, extra.year));
-        break;
-
-      case DataView.POPULATION_DEPARTEMENT:
-        zoomDepartement(map);
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getPopulationExpression(data.communes.jenks, extra.year));
-        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getPopulationExpression(data.departements.jenks, extra.year));
-        break;
-
-      case DataView.POPULATION_REGION:
+      case DataView.POPULATION:
         map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getPopulationExpression(data.communes.jenks, extra.year));
         map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getPopulationExpression(data.departements.jenks, extra.year));
         map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getPopulationExpression(data.regions.jenks, extra.year));
+        break;
+
+      case DataView.DENSITY:
+        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getDensityExpression(data.communes.jenks, extra.year));
+        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getDensityExpression(data.departements.jenks, extra.year));
+        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getDensityExpression(data.regions.jenks, extra.year));
         break;
     }
   }
 
-  export function subMenu(layer: DataView, data: Data, extra: any, setExtra: (value: any) => void): React.ReactNode {
+  export function subMenu(layer: DataView, level: Level, data: Data, extra: any, setExtra: (value: any) => void): React.ReactNode {
     switch (layer) {
       case DataView.SATELLITE:
-      case DataView.AREA_COMMUNE:
-      case DataView.AREA_DEPARTEMENT:
-      case DataView.AREA_REGION:
+      case DataView.AREA:
         return <></>;
-      case DataView.POPULATION_COMMUNE:
-      case DataView.POPULATION_DEPARTEMENT:
-      case DataView.POPULATION_REGION:
+      case DataView.POPULATION:
+      case DataView.DENSITY:
         const years = Object.values(data.regions.regions).filter(c => !!c.population && !!c.population.population)
           .map(c => Object.keys(c.population.population)).flat().filter(onlyUnique).sort().reverse();
 
@@ -121,10 +172,19 @@ export namespace DataView {
     }
   }
 
-  function resetZooms(map: MapRef): void {
+  function resetZooms(map: MapRef, view: DataView, level: Level): void {
     resetCommune(map);
     resetDepartement(map);
     resetRegion(map);
+
+    switch (level) {
+      case Level.COMMUNE:
+        zoomCommune(map);
+        break;
+      case Level.DEPARTEMENT:
+        zoomDepartement(map);
+        break
+    }
   }
 
   function resetRegion(map: MapRef): void {

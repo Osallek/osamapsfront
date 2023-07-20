@@ -3,7 +3,8 @@ const departement = {
   'departement.region': 'Région',
   'departement.chefLieu': 'Chef-lieu',
   'departement.area': 'Superficie',
-  'departement.population': 'Population en {year}'
+  'departement.population': 'Population en {year}',
+  'departement.density': 'Densité de population en {year}',
 };
 
 export default departement;

@@ -1,5 +1,4 @@
 import { Dialog } from '@mui/material';
-import { Breakpoint } from '@mui/system';
 import { LngLat, MapboxGeoJSONFeature, MapSourceDataEvent } from 'mapbox-gl';
 import maplibregl from 'maplibre-gl';
 import { useEffect, useRef, useState } from 'react';
@@ -7,7 +6,7 @@ import { Map, MapLayerMouseEvent, MapRef, Popup } from 'react-map-gl';
 import DataDialog from 'screens/dialog/DataDialog';
 import { mapStyle } from 'screens/map/map-style';
 import DataPopup from 'screens/popup/DataPopup';
-import { Commune, Data, Departement, Region } from 'types/api.types';
+import { Commune, Data, Departement, Level, Region } from 'types/api.types';
 import { DataView, MapsLayers } from 'types/maps.types';
 import { flatten } from 'utils/object.utils';
 
@@ -22,7 +21,6 @@ function MapPage({ data }: MapPageProps) {
   const [position, setPosition] = useState<LngLat | undefined>(undefined);
   const [activeData, setActiveData] = useState<Commune | Departement | Region | undefined>(undefined);
   const [dialog, setDialog] = useState<boolean>(false);
-  const [maxWidth, setMaxWidth] = useState<Breakpoint | false | undefined>(undefined);
   const mapRef = useRef<MapRef>(null);
 
   const onMouseMove = (e: MapLayerMouseEvent) => {
@@ -31,18 +29,18 @@ function MapPage({ data }: MapPageProps) {
     }
 
     let selectedFeatures = e.target.queryRenderedFeatures([e.point.x, e.point.y], {
-      layers: ['commune']
+      layers: [MapsLayers.COMMUNE]
     });
 
     if (selectedFeatures.length === 0) {
       selectedFeatures = e.target.queryRenderedFeatures([e.point.x, e.point.y], {
-        layers: ['departement']
+        layers: [MapsLayers.DEPARTEMENT]
       });
     }
 
     if (selectedFeatures.length === 0) {
       selectedFeatures = e.target.queryRenderedFeatures([e.point.x, e.point.y], {
-        layers: ['region']
+        layers: [MapsLayers.REGION]
       });
     }
 
@@ -151,7 +149,7 @@ function MapPage({ data }: MapPageProps) {
 
   useEffect(() => {
     if (loaded && mapRef.current) {
-      DataView.fill(DataView.SATELLITE, data, mapRef.current);
+      DataView.fill(DataView.SATELLITE, Level.REGION, data, mapRef.current);
     }
   }, [mapRef, loaded]);
 
@@ -179,9 +177,9 @@ function MapPage({ data }: MapPageProps) {
         </Popup>
       )
       }
-      <Dialog open={ dialog && !!activeData } fullWidth maxWidth={ maxWidth }>
+      <Dialog open={ dialog && !!activeData } fullWidth maxWidth='xl'>
         {
-          activeData && <DataDialog data={ activeData } onClose={ () => setDialog(false) } setMaxWidth={ m => setMaxWidth(m) }/>
+          activeData && <DataDialog data={ activeData } onClose={ () => setDialog(false) }/>
         }
       </Dialog>
     </Map>

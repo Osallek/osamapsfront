@@ -1,5 +1,4 @@
 import { CardContent, Grid, Typography } from '@mui/material';
-import { Breakpoint } from '@mui/system';
 import { useContext } from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { DataContext } from 'screens/map/MapPage';
@@ -7,18 +6,13 @@ import { Departement } from 'types/api.types';
 
 interface DepartementDialogInfoProps {
   departement: Departement;
-  setMaxWidth?: (m: Breakpoint | false | undefined) => void;
 }
 
-function DepartementDialogInfo({ departement, setMaxWidth }: DepartementDialogInfoProps) {
+function DepartementDialogInfo({ departement }: DepartementDialogInfoProps) {
   const data = useContext(DataContext);
 
   if (!data) {
     return <></>;
-  }
-
-  if (setMaxWidth) {
-    setMaxWidth(undefined);
   }
 
   return (
@@ -43,6 +37,16 @@ function DepartementDialogInfo({ departement, setMaxWidth }: DepartementDialogIn
                 <FormattedMessage id='departement.population'
                                   values={ { year: Object.keys(departement.population.population).slice(-1)[0] } }/> : <FormattedNumber
                 value={ Object.values(departement.population.population).slice(-1)[0] }/>
+              </Typography>
+            </Grid>
+          )
+        }
+        {
+          departement.population && departement.population.density && (
+            <Grid item>
+              <Typography variant='body2'>
+                <FormattedMessage id='departement.density' values={ { year: Object.keys(departement.population.density).slice(-1)[0] } }/> : <FormattedNumber
+                value={ Object.values(departement.population.density).slice(-1)[0] }/> habitants/km²
               </Typography>
             </Grid>
           )

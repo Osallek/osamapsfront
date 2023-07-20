@@ -16,6 +16,7 @@ export type DataNodes = {
 
 export type DataJenks = {
   population: Record<number, Array<number>>;
+  density: Record<number, Array<number>>;
   area: Array<number>;
 }
 
@@ -41,14 +42,21 @@ export type DataNode<P extends DataPopulations> = IdName<string, string> & {
 export type DataPopulations = {
   population: Record<number, number>;
   countryRanks: Record<number, number>;
+  density: Record<number, number>;
+  densityCountryRanks: Record<number, number>;
+  percentCountry: Record<number, number>;
 }
 
 export type DepartementPopulations = DataPopulations & {
   regionRanks: Record<number, number>;
+  densityRegionRanks: Record<number, number>;
+  percentRegion: Record<number, number>;
 }
 
 export type CommunePopulations = DepartementPopulations & {
   departementRanks: Record<number, number>;
+  densityDepartementRanks: Record<number, number>;
+  percentDepartement: Record<number, number>;
 }
 
 export type Commune = DataNode<CommunePopulations> & {

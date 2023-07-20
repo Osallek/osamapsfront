@@ -1,10 +1,39 @@
 import Gradient from 'javascript-color-gradient';
+import { DataNode, DataPopulations, Departement, Level, Region } from 'types/api.types';
 
-export function getGradient(midPoints: number, minColor: string = "#e2bc74", maxColor: string = "#DA1D1D"): Array<string> {
+export function getGradient(midPoints: number, minColor: string = "#E2BC74", maxColor: string = "#DA1D1D"): Array<string> {
   return new Gradient().setColorGradient(minColor, maxColor).setMidpoint(midPoints).getColors();
 }
 
-export function getRatioColor(ratio: number, minColor: string = "#e2bc74", maxColor: string = "#DA1D1D"): string {
+export function getDataGradient(node: DataNode<DataPopulations>): Array<string> {
+  switch (node.level) {
+    case Level.REGION:
+      return getGradient((node as Region).departements.length, '#8884d8', '#82ca9d');
+    case Level.DEPARTEMENT:
+      return getGradient((node as Departement).communes.length, '#8884d8', '#82ca9d');
+  }
+
+  return getGradient(1);
+}
+
+export function stringToColour(str: string): string {
+  let hash = 0;
+
+  str.split('').forEach(char => {
+    hash = char.charCodeAt(0) + ((hash << 5) - hash);
+  });
+
+  let colour = '#';
+
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xFF;
+    colour += value.toString(16).padStart(2, '0');
+  }
+
+  return colour;
+}
+
+export function getRatioColor(ratio: number, minColor: string = "#E2BC74", maxColor: string = "#DA1D1D"): string {
   const from = rgb(maxColor);
   const to = rgb(minColor);
 

@@ -1,5 +1,4 @@
 import { CardContent, Grid, Typography } from '@mui/material';
-import { Breakpoint } from '@mui/system';
 import { useContext } from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { DataContext } from 'screens/map/MapPage';
@@ -7,18 +6,13 @@ import { Commune } from 'types/api.types';
 
 interface CommuneContentProps {
   commune: Commune;
-  setMaxWidth?: (m: Breakpoint | false | undefined) => void;
 }
 
-function CommuneDialog({ commune, setMaxWidth }: CommuneContentProps) {
+function CommuneDialog({ commune }: CommuneContentProps) {
   const data = useContext(DataContext);
 
   if (!data) {
     return <></>;
-  }
-
-  if (setMaxWidth) {
-    setMaxWidth(undefined);
   }
 
   return (
@@ -46,6 +40,16 @@ function CommuneDialog({ commune, setMaxWidth }: CommuneContentProps) {
               <Typography variant='body2'>
                 <FormattedMessage id='commune.population' values={ { year: Object.keys(commune.population.population).slice(-1)[0] } }/> : <FormattedNumber
                 value={ Object.values(commune.population.population).slice(-1)[0] }/>
+              </Typography>
+            </Grid>
+          )
+        }
+        {
+          commune.population && commune.population.density && (
+            <Grid item>
+              <Typography variant='body2'>
+                <FormattedMessage id='commune.density' values={ { year: Object.keys(commune.population.density).slice(-1)[0] } }/> : <FormattedNumber
+                value={ Object.values(commune.population.density).slice(-1)[0] }/> habitants/km²
               </Typography>
             </Grid>
           )

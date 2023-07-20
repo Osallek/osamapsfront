@@ -33,3 +33,11 @@ export function getPopulationExpression(data: DataJenks, year: number): any {
 
   return getExpression(data.population[year], `population.population.${ year }`);
 }
+
+export function getDensityExpression(data: DataJenks, year: number): any {
+  if (year === undefined) {
+    return 'transparent';
+  }
+
+  return getExpression(data.density[year], `population.density.${ year }`);
+}

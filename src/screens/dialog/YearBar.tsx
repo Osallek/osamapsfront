@@ -2,17 +2,17 @@ import { CardContent, Grid, Typography } from '@mui/material';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import AutoSizer, { HorizontalSize } from 'react-virtualized-auto-sizer';
-import { CartesianGrid, Line, LineChart, XAxis, YAxis, YAxisProps } from 'recharts';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, YAxisProps } from 'recharts';
 
-interface YearDialogPopProps {
+interface YearLinePopProps {
   data: Array<any>;
   legend?: string;
   tooltip?: React.ReactNode;
   yAxis?: Array<YAxisProps>;
-  lines?: Array<any>;
+  bars?: Array<any>;
 }
 
-function YearDialogPop({ data, legend, tooltip, yAxis = [{ dataKey: 'pop' }], lines = [{ dataKey: 'pop' }] }: YearDialogPopProps) {
+function YearLine({ data, legend, tooltip, yAxis = [{ dataKey: 'pop' }], bars = [{ dataKey: 'pop' }] }: YearLinePopProps) {
   const intl = useIntl();
 
   return (
@@ -28,7 +28,7 @@ function YearDialogPop({ data, legend, tooltip, yAxis = [{ dataKey: 'pop' }], li
                       <FormattedMessage id={ legend }/>
                     </Typography>
                   ) }
-                <LineChart
+                <BarChart
                   width={ width }
                   height={ 500 }
                   data={ data }
@@ -51,11 +51,9 @@ function YearDialogPop({ data, legend, tooltip, yAxis = [{ dataKey: 'pop' }], li
                     )
                   }
                   {
-                    lines &&
-                    lines.map(
-                      v => <Line type='bumpX' stroke='#8884d8' connectNulls strokeWidth={ 2 } activeDot={ { r: 6 } } isAnimationActive={ false } { ...v }/>)
+                    bars && bars.map(v => <Bar isAnimationActive={ false } { ...v }/>)
                   }
-                </LineChart>
+                </BarChart>
               </Grid>
             }
           </AutoSizer>
@@ -65,5 +63,4 @@ function YearDialogPop({ data, legend, tooltip, yAxis = [{ dataKey: 'pop' }], li
   );
 }
 
-export default YearDialogPop;
-
+export default YearLine;
