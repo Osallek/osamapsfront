@@ -19,6 +19,8 @@ export type DataJenks = {
   density: Record<number, Array<number>>;
   birth: Record<number, Array<number>>;
   death: Record<number, Array<number>>;
+  birthPerCapita: Record<number, Array<number>>;
+  deathPerCapita: Record<number, Array<number>>;
   area: Array<number>;
 }
 
@@ -51,6 +53,10 @@ export type DataPopulations = {
   deathCountryRanks: Record<number, number>;
   birthPercentCountry: Record<number, number>;
   deathPercentCountry: Record<number, number>;
+  birthPerCapita: Record<number, number>;
+  deathPerCapita: Record<number, number>;
+  birthPerCapitaCountryRanks: Record<number, number>;
+  deathPerCapitaCountryRanks: Record<number, number>;
 }
 
 export type DepartementPopulations = DataPopulations & {
@@ -61,6 +67,8 @@ export type DepartementPopulations = DataPopulations & {
   deathRegionRanks: Record<number, number>;
   birthPercentRegion: Record<number, number>;
   deathPercentRegion: Record<number, number>;
+  birthPerCapitaRegionRanks: Record<number, number>;
+  deathPerCapitaRegionRanks: Record<number, number>;
 }
 
 export type CommunePopulations = DepartementPopulations & {
@@ -71,6 +79,8 @@ export type CommunePopulations = DepartementPopulations & {
   deathDepartementRanks: Record<number, number>;
   birthPercentDepartement: Record<number, number>;
   deathPercentDepartement: Record<number, number>;
+  birthPerCapitaDepartementRanks: Record<number, number>;
+  deathPerCapitaDepartementRanks: Record<number, number>;
 }
 
 export type Commune = DataNode<CommunePopulations> & {
