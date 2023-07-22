@@ -17,6 +17,8 @@ function MapPage() {
       try {
         const { data } = await api.data.get();
         setData(data);
+      } catch (e) {
+        console.error(e);
       } finally {
         setLoading(false);
       }
