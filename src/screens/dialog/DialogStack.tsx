@@ -4,14 +4,14 @@ import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { Tooltip } from 'recharts';
 import YearBar from 'screens/dialog/YearBar';
 import { DataContext } from 'screens/map/MapPage';
-import { Commune, CommunePopulations, Data, Departement, DepartementPopulations, Region } from 'types/api.types';
+import { Api, Commune, CommunePopulations, Departement, DepartementPopulations, Region } from 'types/api.types';
 import { DataLevel } from 'types/maps.types';
 import { getDataGradient } from 'utils/colors.utils';
 
 interface DialogRankProps {
   node: Region | Departement | Commune;
-  mapper: (level: DataLevel, node: Region | Departement | Commune, data: Data) => Array<any>;
-  barsMapper: (level: DataLevel, node: Region | Departement | Commune, data: Data, colors: Array<string>) => Array<any>;
+  mapper: (level: DataLevel, node: Region | Departement | Commune, data: Api) => Array<any>;
+  barsMapper: (level: DataLevel, node: Region | Departement | Commune, data: Api, colors: Array<string>) => Array<any>;
 }
 
 function DialogStack({ node, mapper, barsMapper }: DialogRankProps) {
@@ -60,10 +60,11 @@ function DialogStack({ node, mapper, barsMapper }: DialogRankProps) {
                      value={ level }
                      onChange={ event => setLevel(event.target.value as DataLevel) }
                      select
-                     label={ <FormattedMessage id='view.stack'/> }
+                     label={ <FormattedMessage id="view.stack"/> }
           >
             {
-              levels.map(v => <MenuItem value={ v }><FormattedMessage id={ `view.dataLevel.${ v }e` }/></MenuItem>)
+              levels.map(
+                v => <MenuItem value={ v } key={ v }><FormattedMessage id={ `view.dataLevel.${ v }e` }/></MenuItem>)
             }
           </TextField>
         )
@@ -78,28 +79,28 @@ function DialogStack({ node, mapper, barsMapper }: DialogRankProps) {
                    <Card>
                      <CardHeader title={ payload[0].payload.year } sx={ { paddingBottom: 0 } }/>
                      <CardContent>
-                       <Grid container flexDirection='column'>
+                       <Grid container flexDirection="column">
                          <Grid item>
-                           <Typography variant='body1' component='span' sx={ { fontWeight: 'bold' } }>
+                           <Typography variant="body1" component="span" sx={ { fontWeight: 'bold' } }>
                              { `${ payload[0].payload.name } : ` }
                            </Typography>
-                           <Typography variant='body2' component='span'>
+                           <Typography variant="body2" component="span">
                              <FormattedNumber value={ Number(payload[0].value) }/>%
                            </Typography>
                          </Grid>
                          <Grid item>
-                           <Typography variant='body1' component='span' sx={ { fontWeight: 'bold' } }>
-                             <FormattedMessage id='view.others'/>
+                           <Typography variant="body1" component="span" sx={ { fontWeight: 'bold' } }>
+                             <FormattedMessage id="view.others"/>
                              { ` : ` }
                            </Typography>
-                           <Typography variant='body2' component='span'>
+                           <Typography variant="body2" component="span">
                              <FormattedNumber value={ Number(payload[1].value) }/>%
                            </Typography>
                          </Grid>
                        </Grid>
                      </CardContent>
                    </Card>
-                 )
+                 );
 
                } }/> }/>
     </>

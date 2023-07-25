@@ -4,13 +4,13 @@ import { FormattedMessage } from 'react-intl';
 import { Tooltip } from 'recharts';
 import YearLine from 'screens/dialog/YearLine';
 import { DataContext } from 'screens/map/MapPage';
-import { Commune, CommunePopulations, Data, Departement, DepartementPopulations, Region } from 'types/api.types';
+import { Api, Commune, CommunePopulations, Departement, DepartementPopulations, Region } from 'types/api.types';
 import { DataLevel } from 'types/maps.types';
 
 interface DialogRankProps {
   node: Region | Departement | Commune;
-  mapper: (level: DataLevel, node: Region | Departement | Commune, data: Data) => Array<any>;
-  lengthMapper: (level: DataLevel, node: Region | Departement | Commune, data: Data) => number;
+  mapper: (level: DataLevel, node: Region | Departement | Commune, data: Api) => Array<any>;
+  lengthMapper: (level: DataLevel, node: Region | Departement | Commune, data: Api) => number;
 }
 
 function DialogRank({ node, mapper, lengthMapper }: DialogRankProps) {
@@ -59,10 +59,11 @@ function DialogRank({ node, mapper, lengthMapper }: DialogRankProps) {
                      value={ level }
                      onChange={ event => setLevel(event.target.value as DataLevel) }
                      select
-                     label={ <FormattedMessage id='view.rank'/> }
+                     label={ <FormattedMessage id="view.rank"/> }
           >
             {
-              levels.map(v => <MenuItem value={ v }><FormattedMessage id={ `view.dataLevel.${ v }` }/></MenuItem>)
+              levels.map(
+                v => <MenuItem value={ v } key={ v }><FormattedMessage id={ `view.dataLevel.${ v }` }/></MenuItem>)
             }
           </TextField>
         )
@@ -70,12 +71,12 @@ function DialogRank({ node, mapper, lengthMapper }: DialogRankProps) {
       <YearLine data={ datas } yAxis={ [{ dataKey: 'pop', domain: [1, length] }] }
                 lines={ [{ dataKey: 'pop' }] }
                 tooltip={ <Tooltip content={ ({ active, payload, label }) => {
-                     return active && payload && payload.length > 0 ? (
-                       <div>
-                         { `${ label } : ${ payload ? payload[0].value : '' }` }
-                       </div>
-                     ) : undefined;
-                   } }/> }/>
+                  return active && payload && payload.length > 0 ? (
+                    <div>
+                      { `${ label } : ${ payload ? payload[0].value : '' }` }
+                    </div>
+                  ) : undefined;
+                } }/> }/>
     </>
   );
 }

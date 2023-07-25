@@ -13,7 +13,7 @@ function DialogLine({ node, mapper }: DialogPopProps) {
 
   useEffect(() => {
     setData(mapper.call(undefined, node));
-  }, [node]);
+  }, [mapper, node]);
 
   return (
     <YearLine data={ data }

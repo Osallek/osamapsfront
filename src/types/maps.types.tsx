@@ -2,7 +2,7 @@ import { Autocomplete, TextField } from '@mui/material';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { MapRef } from 'react-map-gl';
-import { Commune, CommunePopulations, Data, Departement, DepartementPopulations, Level, Region } from 'types/api.types';
+import { Api, Commune, CommunePopulations, Departement, DepartementPopulations, Level, Region } from 'types/api.types';
 import { getAreaExpression, getDensityExpression, getPopulationExpression } from 'utils/layer.utils';
 import { onlyUnique } from 'utils/object.utils';
 
@@ -52,44 +52,47 @@ export namespace DataLevel {
     }
   }
 
-  export function getRankLength(level: DataLevel, node: Region | Departement | Commune, data: Data): number {
+  export function getRankLength(level: DataLevel, node: Region | Departement | Commune, data: Api): number {
     if ((node as Commune).departement) {
       switch (level) {
         case DataLevel.COUNTRY:
-          return Object.keys(data.communes.communes).length;
+          return Object.keys(data.common.communes.communes).length;
 
         case DataLevel.REGION:
-          if (data && data.regions && data.regions.regions && data.departements && data.departements.departements) {
-            const departement: Departement | undefined = data.departements.departements[(node as Commune).departement];
+          if (data && data.common.regions && data.common.regions.regions && data.common.departements && data.common.departements.departements) {
+            const departement: Departement | undefined = data.common.departements.departements[(node as Commune).departement];
 
-            if (departement && departement.region && data.regions.regions[departement.region]) {
-              return data.regions.regions[departement.region].departements.map(d => data.departements.departements[d]).filter(d => d !== undefined)
-                .map(d => d.communes.length).reduce((acc, v) => {return acc + v}, 0);
+            if (departement && departement.region && data.common.regions.regions[departement.region]) {
+              return data.common.regions.regions[departement.region].departements.map(
+                d => data.common.departements.departements[d])
+                                                                    .filter(d => d !== undefined)
+                                                                    .map(d => d.communes.length)
+                                                                    .reduce((acc, v) => {return acc + v;}, 0);
             }
           }
           break;
 
         case DataLevel.DEPARTEMENT:
-          if (data && data.departements && data.departements.departements && data.departements.departements[(node as Commune).departement]) {
-            return data.departements.departements[(node as Commune).departement].communes.length;
+          if (data && data.common.departements && data.common.departements.departements && data.common.departements.departements[(node as Commune).departement]) {
+            return data.common.departements.departements[(node as Commune).departement].communes.length;
           }
           break;
       }
     } else if ((node as Departement).region) {
       switch (level) {
         case DataLevel.REGION:
-          if (data && data.regions && data.regions.regions && data.regions.regions[(node as Departement).region]) {
-            return data.regions.regions[(node as Departement).region].departements.length;
+          if (data && data.common.regions && data.common.regions.regions && data.common.regions.regions[(node as Departement).region]) {
+            return data.common.regions.regions[(node as Departement).region].departements.length;
           }
           break;
 
         case DataLevel.COUNTRY:
-          return Object.keys(data.departements.departements).length;
+          return Object.keys(data.common.departements.departements).length;
       }
     } else if ((node as Region).departements) {
       switch (level) {
         case DataLevel.COUNTRY:
-          return Object.keys(data.regions.regions).length;
+          return Object.keys(data.common.regions.regions).length;
       }
     }
 
@@ -106,7 +109,7 @@ export enum DataView {
 
 export namespace DataView {
 
-  export function fill(view: DataView, level: Level, data: Data, map: MapRef, extra?: any): void {
+  export function fill(view: DataView, level: Level, data: Api, map: MapRef, extra?: any): void {
     resetZooms(map, view, level);
 
     switch (view) {
@@ -117,34 +120,49 @@ export namespace DataView {
         break;
 
       case DataView.AREA:
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data.communes.jenks));
-        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getAreaExpression(data.departements.jenks));
-        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getAreaExpression(data.regions.jenks));
+        map.getMap()
+           .setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data.area.communes.jenks));
+        map.getMap()
+           .setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
+             getAreaExpression(data.area.departements.jenks));
+        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getAreaExpression(data.area.regions.jenks));
         break;
 
       case DataView.POPULATION:
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getPopulationExpression(data.communes.jenks, extra.year));
-        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getPopulationExpression(data.departements.jenks, extra.year));
-        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getPopulationExpression(data.regions.jenks, extra.year));
+        map.getMap()
+           .setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
+             getPopulationExpression(data.pop.communes.jenks, extra.year));
+        map.getMap()
+           .setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
+             getPopulationExpression(data.pop.departements.jenks, extra.year));
+        map.getMap()
+           .setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
+             getPopulationExpression(data.pop.regions.jenks, extra.year));
         break;
 
       case DataView.DENSITY:
-        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getDensityExpression(data.communes.jenks, extra.year));
-        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getDensityExpression(data.departements.jenks, extra.year));
-        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getDensityExpression(data.regions.jenks, extra.year));
+        map.getMap()
+           .setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
+             getDensityExpression(data.density.communes.jenks, extra.year));
+        map.getMap()
+           .setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
+             getDensityExpression(data.density.departements.jenks, extra.year));
+        map.getMap()
+           .setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
+             getDensityExpression(data.density.regions.jenks, extra.year));
         break;
     }
   }
 
-  export function subMenu(layer: DataView, level: Level, data: Data, extra: any, setExtra: (value: any) => void): React.ReactNode {
+  export function subMenu(layer: DataView, level: Level, data: Api, extra: any, setExtra: (value: any) => void): React.ReactNode {
     switch (layer) {
       case DataView.SATELLITE:
       case DataView.AREA:
         return <></>;
       case DataView.POPULATION:
       case DataView.DENSITY:
-        const years = Object.values(data.regions.regions).filter(c => !!c.population && !!c.population.population)
-          .map(c => Object.keys(c.population.population)).flat().filter(onlyUnique).sort().reverse();
+        const years = Object.values(data.pop.regions.regions).filter(c => !!c.population && !!c.population.population)
+                            .map(c => Object.keys(c.population.population)).flat().filter(onlyUnique).sort().reverse();
 
         if (years.length === 0) {
           return <></>;
@@ -166,9 +184,9 @@ export namespace DataView {
               extra.year = Number(newValue);
               setExtra({ ...extra });
             } }
-            renderInput={ (params) => <TextField { ...params } label={ <FormattedMessage id='view.year'/> }/> }
+            renderInput={ (params) => <TextField { ...params } label={ <FormattedMessage id="view.year"/> }/> }
           />
-        )
+        );
     }
   }
 
@@ -183,7 +201,7 @@ export namespace DataView {
         break;
       case Level.DEPARTEMENT:
         zoomDepartement(map);
-        break
+        break;
     }
   }
 
@@ -211,15 +229,19 @@ export namespace DataView {
   }
 
   function changeRegion(map: MapRef, min?: number, max?: number, visibility?: boolean): void {
-    changeLayers(map, [MapsLayers.REGION, MapsLayers.REGION_DATA, MapsLayers.REGION_LINE, MapsLayers.REGION_NAME], min, max, visibility);
+    changeLayers(map, [MapsLayers.REGION, MapsLayers.REGION_DATA, MapsLayers.REGION_LINE, MapsLayers.REGION_NAME], min,
+      max, visibility);
   }
 
   function changeDepartement(map: MapRef, min?: number, max?: number, visibility?: boolean): void {
-    changeLayers(map, [MapsLayers.DEPARTEMENT, MapsLayers.DEPARTEMENT_DATA, MapsLayers.DEPARTEMENT_LINE, MapsLayers.DEPARTEMENT_NAME], min, max, visibility);
+    changeLayers(map,
+      [MapsLayers.DEPARTEMENT, MapsLayers.DEPARTEMENT_DATA, MapsLayers.DEPARTEMENT_LINE, MapsLayers.DEPARTEMENT_NAME],
+      min, max, visibility);
   }
 
   function changeCommune(map: MapRef, min?: number, max?: number, visibility?: boolean): void {
-    changeLayers(map, [MapsLayers.COMMUNE, MapsLayers.COMMUNE_DATA, MapsLayers.COMMUNE_LINE, MapsLayers.COMMUNE_NAME], min, max, visibility);
+    changeLayers(map, [MapsLayers.COMMUNE, MapsLayers.COMMUNE_DATA, MapsLayers.COMMUNE_LINE, MapsLayers.COMMUNE_NAME],
+      min, max, visibility);
   }
 
   function changeLayers(map: MapRef, layers: Array<MapsLayers>, min?: number, max?: number, visibility?: boolean): void {

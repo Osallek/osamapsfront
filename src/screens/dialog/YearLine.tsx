@@ -12,7 +12,9 @@ interface YearLinePopProps {
   lines?: Array<any>;
 }
 
-function YearLine({ data, legend, tooltip, yAxis = [{ dataKey: 'pop' }], lines = [{ dataKey: 'pop' }] }: YearLinePopProps) {
+function YearLine({
+                    data, legend, tooltip, yAxis = [{ dataKey: 'pop' }], lines = [{ dataKey: 'pop' }]
+                  }: YearLinePopProps) {
   const intl = useIntl();
 
   return (
@@ -21,10 +23,10 @@ function YearLine({ data, legend, tooltip, yAxis = [{ dataKey: 'pop' }], lines =
         <Grid container item xs={ 12 }>
           <AutoSizer disableHeight>
             { ({ width }: HorizontalSize) =>
-              <Grid container item flexDirection='column' rowGap={ 2 } style={ { width: 'fit-content' } }>
+              <Grid container item flexDirection="column" rowGap={ 2 } style={ { width: 'fit-content' } }>
                 {
                   legend && (
-                    <Typography variant='h6' style={ { textAlign: 'center' } }>
+                    <Typography variant="h6" style={ { textAlign: 'center' } }>
                       <FormattedMessage id={ legend }/>
                     </Typography>
                   ) }
@@ -39,11 +41,13 @@ function YearLine({ data, legend, tooltip, yAxis = [{ dataKey: 'pop' }], lines =
                     bottom: 5,
                   } }
                 >
-                  <CartesianGrid strokeDasharray='3 3'/>
-                  <XAxis dataKey='year' type='number' domain={ ['dataMin', 'dataMax'] } ticks={ data.map(v => v.year) }/>
+                  <CartesianGrid strokeDasharray="3 3"/>
+                  <XAxis dataKey="year" type="number" domain={ ['dataMin', 'dataMax'] }
+                         ticks={ data.map(v => v.year) }/>
                   {
                     yAxis &&
-                    yAxis.map(v => <YAxis tickFormatter={ (value) => intl.formatNumber(value) } allowDecimals={ false } { ...v } />)
+                    yAxis.map((v, index) => <YAxis tickFormatter={ (value) => intl.formatNumber(value) }
+                                                   allowDecimals={ false } { ...v } key={ index }/>)
                   }
                   {
                     tooltip && (
@@ -52,8 +56,9 @@ function YearLine({ data, legend, tooltip, yAxis = [{ dataKey: 'pop' }], lines =
                   }
                   {
                     lines &&
-                    lines.map(
-                      v => <Line type='bumpX' stroke='#8884d8' connectNulls strokeWidth={ 2 } activeDot={ { r: 6 } } isAnimationActive={ false } { ...v }/>)
+                    lines.map((v, index) => <Line type="bumpX" stroke="#8884d8" connectNulls strokeWidth={ 2 }
+                                                  activeDot={ { r: 6 } } isAnimationActive={ false } { ...v }
+                                                  key={ index }/>)
                   }
                 </LineChart>
               </Grid>

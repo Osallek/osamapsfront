@@ -1,7 +1,7 @@
-import { Style } from 'mapbox-gl';
+import { StyleSpecification } from 'maplibre-gl';
 import { MapsLayers } from 'types/maps.types';
 
-export const mapStyle: Style = {
+export const mapStyle: StyleSpecification = {
   version: 8,
   name: 'OsallekMaps',
   sprite: 'https://openmaptiles.github.io/osm-bright-gl-style/sprite',
@@ -199,19 +199,15 @@ export const mapStyle: Style = {
         ],
         'text-letter-spacing': 0.1,
         'text-max-width': 9,
-        'text-size': {
-          base: 1.6,
-          stops: [
-            [
-              1,
-              11
-            ],
-            [
-              7,
-              15
-            ],
-          ]
-        },
+        'text-size': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          1,
+          16,
+          7,
+          20,
+        ],
         'text-transform': 'uppercase',
         visibility: 'visible'
       },
@@ -248,19 +244,15 @@ export const mapStyle: Style = {
           'Noto Sans Regular'
         ],
         'text-max-width': 8,
-        'text-size': {
-          base: 1.2,
-          stops: [
-            [
-              7,
-              10
-            ],
-            [
-              11,
-              20
-            ]
-          ]
-        },
+        'text-size': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          7,
+          12,
+          11,
+          24,
+        ],
         visibility: 'visible'
       },
       'paint': {
@@ -292,19 +284,15 @@ export const mapStyle: Style = {
           'Noto Sans Regular'
         ],
         'text-max-width': 8,
-        'text-size': {
-          base: 1.2,
-          stops: [
-            [
-              7,
-              10
-            ],
-            [
-              11,
-              20
-            ]
-          ]
-        },
+        'text-size': [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          7,
+          12,
+          11,
+          24,
+        ],
         visibility: 'visible'
       },
       'paint': {

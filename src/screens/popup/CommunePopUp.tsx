@@ -37,7 +37,7 @@ function CommunePopUp({ commune, onClose }: CommuneContentProps) {
           <Grid item>
             <Typography variant="body2">
               <FormattedMessage
-                id="commune.departement"/> : { `${ data.departements.departements[commune.departement].name } (${ commune.departement })` }
+                id="commune.departement"/> : { `${ data.common.departements.departements[commune.departement].name } (${ commune.departement })` }
             </Typography>
           </Grid>
           {

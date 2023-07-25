@@ -1,4 +1,6 @@
-import { CommunePopulations, Data, DataNode, DataPopulations, DepartementPopulations, Level } from 'types/api.types';
+import {
+  Api, CommunePopulations, Data, DataNode, DataPopulations, DepartementPopulations, Level
+} from 'types/api.types';
 import { DataLevel } from 'types/maps.types';
 
 export function popLine(node: DataNode<DataPopulations>): Array<any> {
@@ -25,7 +27,7 @@ export function densityLine(node: DataNode<DataPopulations>): Array<any> {
   return recordLine(node.population.density);
 }
 
-export function percentData(node: DataNode<DataPopulations>, level: DataLevel, data: Data): Array<any> {
+export function percentData(node: DataNode<DataPopulations>, level: DataLevel): Array<any> {
   if (!node.population) {
     return [];
   }
@@ -55,6 +57,6 @@ export function percentData(node: DataNode<DataPopulations>, level: DataLevel, d
   return [];
 }
 
-export function percentBars(node: DataNode<DataPopulations>, level: DataLevel, data: Data, colors: Array<string>): Array<any> {
+export function percentBars(): Array<any> {
   return [{ dataKey: 'pop', stackId: 'a', fill: '#8884d8' }, { dataKey: 'other', stackId: 'a', fill: '#82ca9d' }];
 }

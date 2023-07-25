@@ -1,3 +1,14 @@
+export type Api = {
+  pop: Data;
+  density: Data;
+  deathPerCapita: Data;
+  birthPerCapita: Data;
+  death: Data;
+  birth: Data;
+  area: Data;
+  common: Data;
+}
+
 export type Data = {
   communes: Communes;
   departements: Departements;

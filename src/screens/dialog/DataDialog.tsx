@@ -76,8 +76,8 @@ function DataDialog({ data, onClose }: DataDialogProps) {
       }
       {
         tab === 5 && (
-          <DialogStack node={ data } mapper={ (level, node, data) => percentData(node, level, data) }
-                       barsMapper={ (level, node, data1, colors) => percentBars(node, level, data1, colors) }/>
+          <DialogStack node={ data } mapper={ (level, node, data) => percentData(node, level) }
+                       barsMapper={ (level, node, data1, colors) => percentBars() }/>
         )
       }
     </>

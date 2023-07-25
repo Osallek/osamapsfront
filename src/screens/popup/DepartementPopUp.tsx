@@ -23,25 +23,28 @@ function DepartementPopUp({ departement, onClose }: DepartementContentProps) {
                   action={ <IconButton onClick={ onClose }><Close/></IconButton> }/>
       <Divider/>
       <CardContent>
-        <Grid container rowSpacing={ 1 } flexDirection='column'>
+        <Grid container rowSpacing={ 1 } flexDirection="column">
           <Grid item>
-            <Typography variant='body2'>
+            <Typography variant="body2">
               <FormattedMessage
-                id='departement.region'/> : { `${ data.regions.regions[departement.region].name } (${ departement.region })` }
+                id="departement.region"/> : { `${ data.common.regions.regions[departement.region].name } (${ departement.region })` }
             </Typography>
           </Grid>
           <Grid item>
-            <Typography variant='body2'>
+            <Typography variant="body2">
               <FormattedMessage
-                id='departement.chefLieu'/> : { `${ data.communes.communes[departement.chefLieu].name } ${ data.communes.communes[departement.chefLieu].zipCode ? `(${ data.communes.communes[departement.chefLieu].zipCode })` : '' }` }
+                id="departement.chefLieu"/> : { `${ data.common.communes.communes[departement.chefLieu].name } ${ data.common.communes.communes[departement.chefLieu].zipCode ? `(${ data.common.communes.communes[departement.chefLieu].zipCode })` : '' }` }
             </Typography>
           </Grid>
           {
             departement.population && (
               <Grid item>
-                <Typography variant='body2'>
-                  <FormattedMessage id='departement.population'
-                                    values={ { year: Object.keys(departement.population.population).slice(-1)[0] } }/> : <FormattedNumber
+                <Typography variant="body2">
+                  <FormattedMessage id="departement.population"
+                                    values={ {
+                                      year: Object.keys(departement.population.population)
+                                                  .slice(-1)[0]
+                                    } }/> : <FormattedNumber
                   value={ Object.values(departement.population.population).slice(-1)[0] }/>
                 </Typography>
               </Grid>
@@ -50,8 +53,11 @@ function DepartementPopUp({ departement, onClose }: DepartementContentProps) {
           {
             departement.population && departement.population.density && (
               <Grid item>
-                <Typography variant='body2'>
-                  <FormattedMessage id='departement.density' values={ { year: Object.keys(departement.population.density).slice(-1)[0] } }/> : <FormattedNumber
+                <Typography variant="body2">
+                  <FormattedMessage id="departement.density" values={ {
+                    year: Object.keys(departement.population.density)
+                                .slice(-1)[0]
+                  } }/> : <FormattedNumber
                   value={ Object.values(departement.population.density).slice(-1)[0] }/> habitants/km²
                 </Typography>
               </Grid>
@@ -60,15 +66,15 @@ function DepartementPopUp({ departement, onClose }: DepartementContentProps) {
           {
             departement.area && (
               <Grid item>
-                <Typography variant='body2'>
-                  <FormattedMessage id='departement.area'/> : <FormattedNumber value={ departement.area }/> km²
+                <Typography variant="body2">
+                  <FormattedMessage id="departement.area"/> : <FormattedNumber value={ departement.area }/> km²
                 </Typography>
               </Grid>
             )
           }
           <Grid item>
-            <Typography variant='body2'>
-              <FormattedMessage id='departement.code'/> : { departement.id }
+            <Typography variant="body2">
+              <FormattedMessage id="departement.code"/> : { departement.id }
             </Typography>
           </Grid>
         </Grid>
