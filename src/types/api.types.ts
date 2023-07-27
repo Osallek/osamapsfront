@@ -60,6 +60,8 @@ export type DataPopulations = {
   density: Record<number, number>;
   densityCountryRanks: Record<number, number>;
   percentCountry: Record<number, number>;
+  birth: Record<number, number>;
+  death: Record<number, number>;
   birthCountryRanks: Record<number, number>;
   deathCountryRanks: Record<number, number>;
   birthPercentCountry: Record<number, number>;

@@ -1,5 +1,5 @@
 import {
-  Api, CommunePopulations, Data, DataNode, DataPopulations, DepartementPopulations, Level
+  Commune, CommunePopulations, DataNode, DataPopulations, Departement, DepartementPopulations, Level, Region
 } from 'types/api.types';
 import { DataLevel } from 'types/maps.types';
 
@@ -8,7 +8,7 @@ export function popLine(node: DataNode<DataPopulations>): Array<any> {
     return [];
   }
 
-  return Object.entries(node.population.population).map(([year, pop]) => ({ year: year, pop: pop }));
+  return Object.entries(node.population.population).map(([year, pop]) => ({ year, pop }));
 }
 
 export function recordLine(nodes: Record<number, number>): Array<any> {
@@ -16,7 +16,7 @@ export function recordLine(nodes: Record<number, number>): Array<any> {
     return [];
   }
 
-  return Object.entries(nodes).map(([year, pop]) => ({ year: year, pop: pop }));
+  return Object.entries(nodes).map(([year, pop]) => ({ year, pop }));
 }
 
 export function densityLine(node: DataNode<DataPopulations>): Array<any> {
@@ -27,6 +27,46 @@ export function densityLine(node: DataNode<DataPopulations>): Array<any> {
   return recordLine(node.population.density);
 }
 
+export function birthDeathLine(node: DataNode<DataPopulations>): Array<any> {
+  if (!node.population || !node.population.birth || Object.keys(node.population.birth).length === 0) {
+    return [];
+  }
+
+  return Object.entries(node.population.birth)
+               .map(([year, birth]) => ({
+                 year, birth, death: node.population.death ? node.population.death[Number(year)] : undefined
+               }));
+}
+
+export function birthDeathRank(level: DataLevel, node: Region | Departement | Commune): Array<any> {
+  if (!node.population || !node.population.birth || Object.keys(node.population.birth).length === 0) {
+    return [];
+  }
+
+  switch (level) {
+    case DataLevel.COUNTRY:
+      return Object.entries(node.population.birthCountryRanks)
+                   .map(([year, birth]) => ({
+                     year, birth, death: node.population.deathCountryRanks ? node.population.deathCountryRanks[Number(
+                       year)] : undefined
+                   }));
+    case DataLevel.REGION:
+      return Object.entries((node.population as DepartementPopulations).birthRegionRanks)
+                   .map(([year, birth]) => ({
+                     year, birth,
+                     death: (node.population as DepartementPopulations).deathRegionRanks ? (node.population as DepartementPopulations).deathRegionRanks[Number(
+                       year)] : undefined
+                   }));
+    case DataLevel.DEPARTEMENT:
+      return Object.entries((node.population as CommunePopulations).birthDepartementRanks)
+                   .map(([year, birth]) => ({
+                     year, birth,
+                     death: (node.population as CommunePopulations).deathDepartementRanks ? (node.population as CommunePopulations).deathDepartementRanks[Number(
+                       year)] : undefined
+                   }));
+  }
+}
+
 export function percentData(node: DataNode<DataPopulations>, level: DataLevel): Array<any> {
   if (!node.population) {
     return [];
@@ -34,14 +74,16 @@ export function percentData(node: DataNode<DataPopulations>, level: DataLevel): 
 
   switch (level) {
     case DataLevel.COUNTRY:
-      return Object.entries(node.population.percentCountry).map(([year, pop]) => ({ year: year, pop: pop, other: 100 - pop, id: node.id, name: node.name }));
+      return Object.entries(node.population.percentCountry)
+                   .map(([year, pop]) => ({ year: year, pop: pop, other: 100 - pop, id: node.id, name: node.name }));
 
     case DataLevel.REGION:
       switch (node.level) {
         case Level.DEPARTEMENT:
         case Level.COMMUNE:
           return Object.entries((node.population as DepartementPopulations).percentRegion)
-            .map(([year, pop]) => ({ year: year, pop: pop, other: 100 - pop, id: node.id, name: node.name }));
+                       .map(
+                         ([year, pop]) => ({ year: year, pop: pop, other: 100 - pop, id: node.id, name: node.name }));
       }
       break;
 

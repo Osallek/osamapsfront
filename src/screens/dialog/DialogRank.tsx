@@ -1,7 +1,7 @@
 import { MenuItem, TextField } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Tooltip } from 'recharts';
+import { Tooltip, YAxisProps } from 'recharts';
 import YearLine from 'screens/dialog/YearLine';
 import { DataContext } from 'screens/map/MapPage';
 import { Api, Commune, CommunePopulations, Departement, DepartementPopulations, Region } from 'types/api.types';
@@ -11,9 +11,14 @@ interface DialogRankProps {
   node: Region | Departement | Commune;
   mapper: (level: DataLevel, node: Region | Departement | Commune, data: Api) => Array<any>;
   lengthMapper: (level: DataLevel, node: Region | Departement | Commune, data: Api) => number;
+  lines?: Array<any>;
+  yAxis?: (length: number) => Array<YAxisProps>;
+  tooltip?: React.ReactNode;
 }
 
-function DialogRank({ node, mapper, lengthMapper }: DialogRankProps) {
+function DialogRank({
+                      node, mapper, lengthMapper, lines, yAxis, tooltip
+                    }: DialogRankProps) {
   const [datas, setDatas] = useState<Array<any>>([]);
   const [length, setLength] = useState<number>(1);
   const [level, setLevel] = useState<DataLevel>(DataLevel.COUNTRY);
@@ -38,14 +43,14 @@ function DialogRank({ node, mapper, lengthMapper }: DialogRankProps) {
     if (levels.indexOf(level) < 0) {
       setLevel(DataLevel.COUNTRY);
     }
-  }, [levels]);
+  }, [level, levels]);
 
   useEffect(() => {
     if (data) {
       setDatas(mapper.call(undefined, level, node, data));
       setLength(lengthMapper.call(undefined, level, node, data));
     }
-  }, [node, level]);
+  }, [node, level, data, mapper, lengthMapper]);
 
   if (!data) {
     return <></>;
@@ -68,9 +73,9 @@ function DialogRank({ node, mapper, lengthMapper }: DialogRankProps) {
           </TextField>
         )
       }
-      <YearLine data={ datas } yAxis={ [{ dataKey: 'pop', domain: [1, length] }] }
-                lines={ [{ dataKey: 'pop' }] }
-                tooltip={ <Tooltip content={ ({ active, payload, label }) => {
+      <YearLine data={ datas } lines={ lines }
+                yAxis={ yAxis ? yAxis.call(undefined, length) : [{ dataKey: 'pop', domain: [1, length] }] }
+                tooltip={ tooltip ? tooltip : <Tooltip content={ ({ active, payload, label }) => {
                   return active && payload && payload.length > 0 ? (
                     <div>
                       { `${ label } : ${ payload ? payload[0].value : '' }` }

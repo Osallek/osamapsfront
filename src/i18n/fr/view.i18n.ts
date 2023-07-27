@@ -18,12 +18,17 @@ const view = {
   'view.rank': 'Classement',
   'view.stack': 'Représentation',
   'view.others': 'Autres',
+  'view.births': 'Naissances',
+  'view.deaths': 'Décès',
+  'view.diff': 'Différence',
   'view.tab.0': 'Informations',
   'view.tab.1': 'Historique de population',
   'view.tab.2': 'Classement en nombre d\'habitants',
   'view.tab.3': 'Historique de densité de population',
   'view.tab.4': 'Classement en densité de population',
   'view.tab.5': 'Représentation de la population',
-}
+  'view.tab.6': 'Historique des naissances et décès',
+  'view.tab.7': 'Classement en nombre de naissances et décès',
+};
 
 export default view;

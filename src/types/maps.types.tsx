@@ -52,6 +52,28 @@ export namespace DataLevel {
     }
   }
 
+  export function getBirthRank(level: DataLevel, node: Region | Departement | Commune): Record<number, number> {
+    switch (level) {
+      case DataLevel.COUNTRY:
+        return node.population.birthCountryRanks;
+      case DataLevel.REGION:
+        return (node.population as DepartementPopulations).birthRegionRanks;
+      case DataLevel.DEPARTEMENT:
+        return (node.population as CommunePopulations).birthDepartementRanks;
+    }
+  }
+
+  export function getDeathRank(level: DataLevel, node: Region | Departement | Commune): Record<number, number> {
+    switch (level) {
+      case DataLevel.COUNTRY:
+        return node.population.deathCountryRanks;
+      case DataLevel.REGION:
+        return (node.population as DepartementPopulations).deathRegionRanks;
+      case DataLevel.DEPARTEMENT:
+        return (node.population as CommunePopulations).deathDepartementRanks;
+    }
+  }
+
   export function getRankLength(level: DataLevel, node: Region | Departement | Commune, data: Api): number {
     if ((node as Commune).departement) {
       switch (level) {
