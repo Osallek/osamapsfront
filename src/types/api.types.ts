@@ -101,6 +101,7 @@ export type Commune = DataNode<CommunePopulations> & {
   zipCode: string;
   areaRegionRanks?: number;
   areaDepartementRanks?: number;
+  point?: Point;
 }
 
 export type Departement = DataNode<DepartementPopulations> & {
