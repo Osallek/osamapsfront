@@ -6,7 +6,8 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useMap } from 'react-map-gl';
-import { Api, Data, Level } from 'types/api.types';
+import MenuSearch from 'screens/MapMenu/MenuSearch';
+import { Api, Commune, Level } from 'types/api.types';
 import { DataView } from 'types/maps.types';
 import { enumKeys } from 'utils/object.utils';
 
@@ -53,6 +54,12 @@ function MapMenu({ data }: MapMenuProps) {
     }
   }, [main, view, extra, level, data]);
 
+  const onSearchChange = (commune: Commune | undefined) => {
+    if (main && main.loaded() && commune?.point) {
+      main.flyTo({ center: [commune.point.lon, commune.point.lat] });
+    }
+  }
+
   return (
     <>
       <Drawer
@@ -74,6 +81,7 @@ function MapMenu({ data }: MapMenuProps) {
         <Card ref={ card }
               sx={ { position: 'absolute', zIndex: 2, paddingLeft: 2, paddingRight: 2, minHeight: '100vh' } }>
           <CardContent sx={ { padding: 1 } }>
+            <MenuSearch data={ data } onChange={ onSearchChange }/>
             <FormControl fullWidth>
               <FormLabel>
                 <FormattedMessage id="view.level"/>
