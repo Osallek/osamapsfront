@@ -251,9 +251,6 @@ export namespace DataView {
                         .reverse()
                         .map(y => Number(y));
 
-    console.log(years);
-    console.log(extra);
-
     if (years.length === 0) {
       return <></>;
     }
