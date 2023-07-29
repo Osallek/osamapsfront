@@ -20,6 +20,11 @@ function DepartementDialogInfo({ departement }: DepartementDialogInfoProps) {
       <Grid container rowSpacing={ 1 } flexDirection="column">
         <Grid item>
           <Typography variant="body2">
+            <FormattedMessage id="departement.code"/> : { departement.id }
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Typography variant="body2">
             <FormattedMessage
               id="departement.region"/> : { `${ data.common.regions.regions[departement.region].name } (${ departement.region })` }
           </Typography>
@@ -30,6 +35,15 @@ function DepartementDialogInfo({ departement }: DepartementDialogInfoProps) {
               id="departement.chefLieu"/> : { `${ data.common.communes.communes[departement.chefLieu].name } ${ data.common.communes.communes[departement.chefLieu].zipCode ? `(${ data.common.communes.communes[departement.chefLieu].zipCode })` : '' }` }
           </Typography>
         </Grid>
+        {
+          departement.area && (
+            <Grid item>
+              <Typography variant="body2">
+                <FormattedMessage id="departement.area"/> : <FormattedNumber value={ departement.area }/> km²
+              </Typography>
+            </Grid>
+          )
+        }
         {
           departement.population && (
             <Grid item>
@@ -58,19 +72,57 @@ function DepartementDialogInfo({ departement }: DepartementDialogInfoProps) {
           )
         }
         {
-          departement.area && (
+          departement.population && departement.population.birth && (
             <Grid item>
               <Typography variant="body2">
-                <FormattedMessage id="departement.area"/> : <FormattedNumber value={ departement.area }/> km²
+                <FormattedMessage id="departement.birth" values={ {
+                  year: Object.keys(departement.population.birth)
+                              .slice(-1)[0]
+                } }/> : <FormattedNumber
+                value={ Object.values(departement.population.birth).slice(-1)[0] }/>
               </Typography>
             </Grid>
           )
         }
-        <Grid item>
-          <Typography variant="body2">
-            <FormattedMessage id="departement.code"/> : { departement.id }
-          </Typography>
-        </Grid>
+        {
+          departement.population && departement.population.death && (
+            <Grid item>
+              <Typography variant="body2">
+                <FormattedMessage id="departement.death" values={ {
+                  year: Object.keys(departement.population.death)
+                              .slice(-1)[0]
+                } }/> : <FormattedNumber
+                value={ Object.values(departement.population.death).slice(-1)[0] }/>
+              </Typography>
+            </Grid>
+          )
+        }
+        {
+          departement.population && departement.population.birthPerCapita && (
+            <Grid item>
+              <Typography variant="body2">
+                <FormattedMessage id="departement.birthPerCapita" values={ {
+                  year: Object.keys(departement.population.birthPerCapita)
+                              .slice(-1)[0]
+                } }/> : <FormattedNumber
+                value={ Object.values(departement.population.birthPerCapita).slice(-1)[0] }/>
+              </Typography>
+            </Grid>
+          )
+        }
+        {
+          departement.population && departement.population.deathPerCapita && (
+            <Grid item>
+              <Typography variant="body2">
+                <FormattedMessage id="departement.deathPerCapita" values={ {
+                  year: Object.keys(departement.population.deathPerCapita)
+                              .slice(-1)[0]
+                } }/> : <FormattedNumber
+                value={ Object.values(departement.population.deathPerCapita).slice(-1)[0] }/>
+              </Typography>
+            </Grid>
+          )
+        }
       </Grid>
     </CardContent>
   );

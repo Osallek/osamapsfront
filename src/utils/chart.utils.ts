@@ -38,6 +38,18 @@ export function birthDeathLine(node: DataNode<DataPopulations>): Array<any> {
                }));
 }
 
+export function birthDeathPerCapitaLine(node: DataNode<DataPopulations>): Array<any> {
+  if (!node.population || !node.population.birthPerCapita || Object.keys(node.population.birthPerCapita).length === 0) {
+    return [];
+  }
+
+  return Object.entries(node.population.birthPerCapita)
+               .map(([year, birth]) => ({
+                 year, birth,
+                 death: node.population.deathPerCapita ? node.population.deathPerCapita[Number(year)] : undefined
+               }));
+}
+
 export function birthDeathRank(level: DataLevel, node: Region | Departement | Commune): Array<any> {
   if (!node.population || !node.population.birth || Object.keys(node.population.birth).length === 0) {
     return [];
@@ -62,6 +74,36 @@ export function birthDeathRank(level: DataLevel, node: Region | Departement | Co
                    .map(([year, birth]) => ({
                      year, birth,
                      death: (node.population as CommunePopulations).deathDepartementRanks ? (node.population as CommunePopulations).deathDepartementRanks[Number(
+                       year)] : undefined
+                   }));
+  }
+}
+
+export function birthDeathPerCapitaRank(level: DataLevel, node: Region | Departement | Commune): Array<any> {
+  if (!node.population || !node.population.birthPerCapita || Object.keys(node.population.birthPerCapita).length === 0) {
+    return [];
+  }
+
+  switch (level) {
+    case DataLevel.COUNTRY:
+      return Object.entries(node.population.birthPerCapitaCountryRanks)
+                   .map(([year, birth]) => ({
+                     year, birth,
+                     death: node.population.deathPerCapitaCountryRanks ? node.population.deathPerCapitaCountryRanks[Number(
+                       year)] : undefined
+                   }));
+    case DataLevel.REGION:
+      return Object.entries((node.population as DepartementPopulations).birthPerCapitaRegionRanks)
+                   .map(([year, birth]) => ({
+                     year, birth,
+                     death: (node.population as DepartementPopulations).deathPerCapitaRegionRanks ? (node.population as DepartementPopulations).deathPerCapitaRegionRanks[Number(
+                       year)] : undefined
+                   }));
+    case DataLevel.DEPARTEMENT:
+      return Object.entries((node.population as CommunePopulations).birthPerCapitaDepartementRanks)
+                   .map(([year, birth]) => ({
+                     year, birth,
+                     death: (node.population as CommunePopulations).deathPerCapitaDepartementRanks ? (node.population as CommunePopulations).deathPerCapitaDepartementRanks[Number(
                        year)] : undefined
                    }));
   }

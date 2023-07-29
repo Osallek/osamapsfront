@@ -4,6 +4,10 @@ const view = {
   'view.AREA': 'Superficie',
   'view.POPULATION': 'Population',
   'view.DENSITY': 'Densité de population',
+  'view.BIRTH': 'Naissances',
+  'view.DEATH': 'Décès',
+  'view.BIRTH_PER_CAPITA': 'Naissances par habitant',
+  'view.DEATH_PER_CAPITA': 'Décès par habitant',
   'view.year': 'Année',
   'view.level': 'Niveau de zoom',
   'view.level.COMMUNE': 'Communes',
@@ -29,6 +33,8 @@ const view = {
   'view.tab.5': 'Représentation de la population',
   'view.tab.6': 'Historique des naissances et décès',
   'view.tab.7': 'Classement en nombre de naissances et décès',
+  'view.tab.8': 'Historique des naissances et décès par habitant',
+  'view.tab.9': 'Classement en nombre de naissances et décès par habitant',
 };
 
 export default view;

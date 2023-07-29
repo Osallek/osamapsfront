@@ -20,10 +20,24 @@ function RegionDialogInfo({ region }: RegionDialogInfoProps) {
       <Grid container rowSpacing={ 1 } flexDirection="column">
         <Grid item>
           <Typography variant="body2">
+            <FormattedMessage id="region.code"/> : { region.id }
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Typography variant="body2">
             <FormattedMessage
               id="region.chefLieu"/> : { `${ data.common.communes.communes[region.chefLieu].name } ${ data.common.communes.communes[region.chefLieu].zipCode ? `(${ data.common.communes.communes[region.chefLieu].zipCode })` : '' }` }
           </Typography>
         </Grid>
+        {
+          region.area && (
+            <Grid item>
+              <Typography variant="body2">
+                <FormattedMessage id="region.area"/> : <FormattedNumber value={ region.area }/> km²
+              </Typography>
+            </Grid>
+          )
+        }
         {
           region.population && region.population.population && (
             <Grid item>
@@ -51,19 +65,57 @@ function RegionDialogInfo({ region }: RegionDialogInfoProps) {
           )
         }
         {
-          region.area && (
+          region.population && region.population.birth && (
             <Grid item>
               <Typography variant="body2">
-                <FormattedMessage id="region.area"/> : <FormattedNumber value={ region.area }/> km²
+                <FormattedMessage id="region.birth" values={ {
+                  year: Object.keys(region.population.birth)
+                              .slice(-1)[0]
+                } }/> : <FormattedNumber
+                value={ Object.values(region.population.birth).slice(-1)[0] }/>
               </Typography>
             </Grid>
           )
         }
-        <Grid item>
-          <Typography variant="body2">
-            <FormattedMessage id="region.code"/> : { region.id }
-          </Typography>
-        </Grid>
+        {
+          region.population && region.population.death && (
+            <Grid item>
+              <Typography variant="body2">
+                <FormattedMessage id="region.death" values={ {
+                  year: Object.keys(region.population.death)
+                              .slice(-1)[0]
+                } }/> : <FormattedNumber
+                value={ Object.values(region.population.death).slice(-1)[0] }/>
+              </Typography>
+            </Grid>
+          )
+        }
+        {
+          region.population && region.population.birthPerCapita && (
+            <Grid item>
+              <Typography variant="body2">
+                <FormattedMessage id="region.birthPerCapita" values={ {
+                  year: Object.keys(region.population.birthPerCapita)
+                              .slice(-1)[0]
+                } }/> : <FormattedNumber
+                value={ Object.values(region.population.birthPerCapita).slice(-1)[0] }/>
+              </Typography>
+            </Grid>
+          )
+        }
+        {
+          region.population && region.population.deathPerCapita && (
+            <Grid item>
+              <Typography variant="body2">
+                <FormattedMessage id="region.deathPerCapita" values={ {
+                  year: Object.keys(region.population.deathPerCapita)
+                              .slice(-1)[0]
+                } }/> : <FormattedNumber
+                value={ Object.values(region.population.deathPerCapita).slice(-1)[0] }/>
+              </Typography>
+            </Grid>
+          )
+        }
       </Grid>
     </CardContent>
   );

@@ -12,7 +12,8 @@ import RegionDialogInfo from 'screens/dialog/RegionDialogInfo';
 import { Commune, Departement, Level, Region } from 'types/api.types';
 import { DataLevel } from 'types/maps.types';
 import {
-  birthDeathLine, birthDeathRank, densityLine, percentBars, percentData, popLine, recordLine
+  birthDeathLine, birthDeathPerCapitaLine, birthDeathPerCapitaRank, birthDeathRank, densityLine, percentBars,
+  percentData, popLine, recordLine
 } from 'utils/chart.utils';
 
 interface DataDialogProps {
@@ -36,6 +37,8 @@ function DataDialog({ data, onClose }: DataDialogProps) {
         <Tab label={ <FormattedMessage id="view.tab.5"/> } wrapped/>
         <Tab label={ <FormattedMessage id="view.tab.6"/> } wrapped/>
         <Tab label={ <FormattedMessage id="view.tab.7"/> } wrapped/>
+        <Tab label={ <FormattedMessage id="view.tab.8"/> } wrapped/>
+        <Tab label={ <FormattedMessage id="view.tab.9"/> } wrapped/>
       </Tabs>
       {
         tab === 0 && (
@@ -83,14 +86,14 @@ function DataDialog({ data, onClose }: DataDialogProps) {
       {
         tab === 5 && (
           <DialogStack node={ data } mapper={ (level, node, data) => percentData(node, level) }
-                       barsMapper={ (level, node, data1, colors) => percentBars() }/>
+                       barsMapper={ () => percentBars() }/>
         )
       }
       {
         tab === 6 && (
           <DialogLine node={ data } mapper={ node => birthDeathLine(node) } yAxis={ [{ dataKey: 'birth' }] }
                       lines={ [{ dataKey: 'birth', stroke: '#82CA9D' }, { dataKey: 'death', stroke: '#DA1D1D' }] }
-                      tooltip={ <Tooltip content={ ({ active, payload, label }) => {
+                      tooltip={ <Tooltip content={ ({ active, payload }) => {
                         if (!active || !payload || payload.length <= 0) {
                           return undefined;
                         }
@@ -145,7 +148,104 @@ function DataDialog({ data, onClose }: DataDialogProps) {
                       lengthMapper={ (level, node, data1) => DataLevel.getRankLength(level, node, data1) }
                       lines={ [{ dataKey: 'birth', stroke: '#82CA9D' }, { dataKey: 'death', stroke: '#DA1D1D' }] }
                       yAxis={ length => [{ dataKey: 'birth', domain: [1, length] }] }
-                      tooltip={ <Tooltip content={ ({ active, payload, label }) => {
+                      tooltip={ <Tooltip content={ ({ active, payload }) => {
+                        if (!active || !payload || payload.length <= 0) {
+                          return undefined;
+                        }
+
+                        return (
+                          <Card>
+                            <CardHeader title={ payload[0].payload.year } sx={ { paddingBottom: 0 } }/>
+                            <CardContent>
+                              <Grid container flexDirection="column">
+                                <Grid item>
+                                  <Typography variant="body1" component="span"
+                                              sx={ { fontWeight: 'bold', color: '#82CA9D' } }>
+                                    <FormattedMessage id="view.births"/>
+                                    { ` : ` }
+                                  </Typography>
+                                  <Typography variant="body2" component="span">
+                                    <FormattedNumber value={ Number(payload[0].value) }/>
+                                  </Typography>
+                                </Grid>
+                                <Grid item>
+                                  <Typography variant="body1" component="span"
+                                              sx={ { fontWeight: 'bold', color: '#DA1D1D' } }>
+                                    <FormattedMessage id="view.deaths"/>
+                                    { ` : ` }
+                                  </Typography>
+                                  <Typography variant="body2" component="span">
+                                    <FormattedNumber value={ Number(payload[1].value) }/>
+                                  </Typography>
+                                </Grid>
+                              </Grid>
+                            </CardContent>
+                          </Card>
+                        );
+
+                      } }/> }/>
+        )
+      }
+      {
+        tab === 8 && (
+          <DialogLine node={ data } mapper={ node => birthDeathPerCapitaLine(node) } yAxis={ [{ dataKey: 'birth' }] }
+                      lines={ [{ dataKey: 'birth', stroke: '#82CA9D' }, { dataKey: 'death', stroke: '#DA1D1D' }] }
+                      tooltip={ <Tooltip content={ ({ active, payload }) => {
+                        if (!active || !payload || payload.length <= 0) {
+                          return undefined;
+                        }
+
+                        return (
+                          <Card>
+                            <CardHeader title={ payload[0].payload.year } sx={ { paddingBottom: 0 } }/>
+                            <CardContent>
+                              <Grid container flexDirection="column">
+                                <Grid item>
+                                  <Typography variant="body1" component="span"
+                                              sx={ { fontWeight: 'bold', color: '#82CA9D' } }>
+                                    <FormattedMessage id="view.births"/>
+                                    { ` : ` }
+                                  </Typography>
+                                  <Typography variant="body2" component="span">
+                                    <FormattedNumber value={ Number(payload[0].value) }/>
+                                  </Typography>
+                                </Grid>
+                                <Grid item>
+                                  <Typography variant="body1" component="span"
+                                              sx={ { fontWeight: 'bold', color: '#DA1D1D' } }>
+                                    <FormattedMessage id="view.deaths"/>
+                                    { ` : ` }
+                                  </Typography>
+                                  <Typography variant="body2" component="span">
+                                    <FormattedNumber value={ Number(payload[1].value) }/>
+                                  </Typography>
+                                </Grid>
+                                <Grid item>
+                                  <Typography variant="body1" component="span"
+                                              sx={ { fontWeight: 'bold', color: '#8884d8' } }>
+                                    <FormattedMessage id="view.diff"/>
+                                    { ` : ` }
+                                  </Typography>
+                                  <Typography variant="body2" component="span">
+                                    <FormattedNumber value={ Number(payload[0].value) - Number(payload[1].value) }
+                                                     signDisplay="exceptZero"/>
+                                  </Typography>
+                                </Grid>
+                              </Grid>
+                            </CardContent>
+                          </Card>
+                        );
+
+                      } }/> }/>
+        )
+      }
+      {
+        tab === 9 && (
+          <DialogRank node={ data } mapper={ (level, node, data1) => birthDeathPerCapitaRank(level, node) }
+                      lengthMapper={ (level, node, data1) => DataLevel.getRankLength(level, node, data1) }
+                      lines={ [{ dataKey: 'birth', stroke: '#82CA9D' }, { dataKey: 'death', stroke: '#DA1D1D' }] }
+                      yAxis={ length => [{ dataKey: 'birth', domain: [1, length] }] }
+                      tooltip={ <Tooltip content={ ({ active, payload }) => {
                         if (!active || !payload || payload.length <= 0) {
                           return undefined;
                         }

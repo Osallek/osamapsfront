@@ -4,14 +4,14 @@ import { addressApi } from 'api/api';
 import { debounce } from 'lodash';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { AddressFeature, Point } from 'types/api.types';
+import { AddressFeature, AddressType, Point } from 'types/api.types';
 
 const SearchPopper = (props: PopperProps, nbOptions: number) => {
   return <Popper { ...props } sx={ { width: 'fit-content !important' } } placement="bottom-start"/>;
 };
 
 interface MenuSearchProps {
-  onChange: (commune: Point | undefined) => void;
+  onChange: (commune: Point | undefined, type: AddressType | undefined) => void;
 }
 
 function MenuSearch({ onChange }: MenuSearchProps) {
@@ -60,7 +60,9 @@ function MenuSearch({ onChange }: MenuSearchProps) {
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
         onChange(
-          newValue ? { lat: newValue.geometry.coordinates[1], lon: newValue.geometry.coordinates[0] } : undefined);
+          newValue ? {
+            lat: newValue.geometry.coordinates[1], lon: newValue.geometry.coordinates[0]
+          } : undefined, newValue ? newValue.properties.type : undefined);
       } }
       onInputChange={ (event, newInputValue) => {
         setInputValue(newInputValue);

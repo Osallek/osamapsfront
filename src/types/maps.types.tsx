@@ -2,8 +2,10 @@ import { Autocomplete, TextField } from '@mui/material';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { MapRef } from 'react-map-gl';
-import { Api, Commune, CommunePopulations, Departement, DepartementPopulations, Level, Region } from 'types/api.types';
-import { getAreaExpression, getDensityExpression, getPopulationExpression } from 'utils/layer.utils';
+import {
+  Api, Commune, CommunePopulations, DataPopulations, Departement, DepartementPopulations, Level, Region
+} from 'types/api.types';
+import { getAreaExpression, getYearExpression } from 'utils/layer.utils';
 import { onlyUnique } from 'utils/object.utils';
 
 export enum MapsLayers {
@@ -127,6 +129,10 @@ export enum DataView {
   AREA,
   POPULATION,
   DENSITY,
+  BIRTH,
+  DEATH,
+  BIRTH_PER_CAPITA,
+  DEATH_PER_CAPITA,
 }
 
 export namespace DataView {
@@ -153,63 +159,122 @@ export namespace DataView {
       case DataView.POPULATION:
         map.getMap()
            .setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
-             getPopulationExpression(data.pop.communes.jenks, extra.year));
+             getYearExpression(data.pop.communes.jenks.population, extra.year, 'population.population'));
         map.getMap()
            .setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
-             getPopulationExpression(data.pop.departements.jenks, extra.year));
+             getYearExpression(data.pop.departements.jenks.population, extra.year, 'population.population'));
         map.getMap()
            .setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
-             getPopulationExpression(data.pop.regions.jenks, extra.year));
+             getYearExpression(data.pop.regions.jenks.population, extra.year, 'population.population'));
         break;
 
       case DataView.DENSITY:
         map.getMap()
            .setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
-             getDensityExpression(data.density.communes.jenks, extra.year));
+             getYearExpression(data.density.communes.jenks.density, extra.year, 'population.density'));
         map.getMap()
            .setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
-             getDensityExpression(data.density.departements.jenks, extra.year));
+             getYearExpression(data.density.departements.jenks.density, extra.year, 'population.density'));
         map.getMap()
            .setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
-             getDensityExpression(data.density.regions.jenks, extra.year));
+             getYearExpression(data.density.regions.jenks.density, extra.year, 'population.density'));
+        break;
+
+      case DataView.BIRTH:
+        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
+          getYearExpression(data.birth.communes.jenks.birth, extra.year, 'population.birth'));
+        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
+          getYearExpression(data.birth.departements.jenks.birth, extra.year, 'population.birth'));
+        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
+          getYearExpression(data.birth.regions.jenks.birth, extra.year, 'population.birth'));
+        break;
+
+      case DataView.DEATH:
+        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
+          getYearExpression(data.death.communes.jenks.death, extra.year, 'population.death'));
+        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
+          getYearExpression(data.death.departements.jenks.death, extra.year, 'population.death'));
+        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
+          getYearExpression(data.death.regions.jenks.death, extra.year, 'population.death'));
+        break;
+
+      case DataView.BIRTH_PER_CAPITA:
+        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
+          getYearExpression(data.birthPerCapita.communes.jenks.birthPerCapita, extra.year,
+            'population.birthPerCapita'));
+        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
+          getYearExpression(data.birthPerCapita.departements.jenks.birthPerCapita, extra.year,
+            'population.birthPerCapita'));
+        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
+          getYearExpression(data.birthPerCapita.regions.jenks.birthPerCapita, extra.year, 'population.birthPerCapita'));
+        break;
+
+      case DataView.DEATH_PER_CAPITA:
+        map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
+          getYearExpression(data.deathPerCapita.communes.jenks.deathPerCapita, extra.year,
+            'population.deathPerCapita'));
+        map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
+          getYearExpression(data.deathPerCapita.departements.jenks.deathPerCapita, extra.year,
+            'population.deathPerCapita'));
+        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
+          getYearExpression(data.deathPerCapita.regions.jenks.deathPerCapita, extra.year, 'population.deathPerCapita'));
         break;
     }
   }
 
   export function subMenu(layer: DataView, level: Level, data: Api, extra: any, setExtra: (value: any) => void): React.ReactNode {
+    let years;
+
     switch (layer) {
       case DataView.SATELLITE:
       case DataView.AREA:
         return <></>;
       case DataView.POPULATION:
       case DataView.DENSITY:
-        const years = Object.values(data.pop.regions.regions).filter(c => !!c.population && !!c.population.population)
-                            .map(c => Object.keys(c.population.population)).flat().filter(onlyUnique).sort().reverse();
-
-        if (years.length === 0) {
-          return <></>;
-        }
-
-        if (!extra.year) {
-          setExtra({ ...extra, year: years[0] });
-        }
-
-        return (
-          <Autocomplete
-            disablePortal
-            disableClearable
-            options={ years }
-            getOptionLabel={ option => option.toString() }
-            isOptionEqualToValue={ (option, value) => option == value }
-            value={ extra.year }
-            onChange={ (event: any, newValue: number) => {
-              extra.year = Number(newValue);
-              setExtra({ ...extra });
-            } }
-            renderInput={ (params) => <TextField { ...params } label={ <FormattedMessage id="view.year"/> }/> }
-          />
-        );
+        return yearsAutocomplete(data.pop.regions.regions, pop => pop.population, extra, setExtra);
+      case DataView.BIRTH:
+      case DataView.DEATH:
+        return yearsAutocomplete(data.birth.regions.regions, pop => pop.birth, extra, setExtra);
+      case DataView.BIRTH_PER_CAPITA:
+      case DataView.DEATH_PER_CAPITA:
+        return yearsAutocomplete(data.birthPerCapita.regions.regions, pop => pop.birthPerCapita, extra, setExtra);
     }
+  }
+
+  function yearsAutocomplete(data: Record<string, Region>, mapper: (pop: DataPopulations) => Record<number, number>, extra: any, setExtra: (value: any) => void): React.ReactNode {
+    const years = Object.values(data)
+                        .filter(c => !!c.population && !!mapper(c.population))
+                        .map(c => Object.keys(mapper(c.population)))
+                        .flat()
+                        .filter(onlyUnique)
+                        .sort()
+                        .reverse()
+                        .map(y => Number(y));
+
+    console.log(years);
+    console.log(extra);
+
+    if (years.length === 0) {
+      return <></>;
+    }
+
+    if (!extra.year || !years.includes(extra.year)) {
+      setExtra({ ...extra, year: years[0] });
+    }
+
+    return (
+      <Autocomplete
+        disableClearable
+        options={ years }
+        getOptionLabel={ option => option.toString() }
+        isOptionEqualToValue={ (option, value) => option == value }
+        value={ extra.year }
+        onChange={ (event: any, newValue: number) => {
+          setExtra({ ...extra, year: newValue });
+        } }
+        renderInput={ (params) => <TextField { ...params } label={ <FormattedMessage id="view.year"/> }/> }
+      />
+    );
   }
 
   function resetZooms(map: MapRef, view: DataView, level: Level): void {

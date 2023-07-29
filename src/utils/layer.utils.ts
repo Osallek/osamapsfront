@@ -26,18 +26,10 @@ export function getAreaExpression(data: DataJenks): any {
   return getExpression(data.area, 'area');
 }
 
-export function getPopulationExpression(data: DataJenks, year: number): any {
+export function getYearExpression(data: Record<number, Array<number>>, year: number, field: string): any {
   if (year === undefined) {
     return 'transparent';
   }
 
-  return getExpression(data.population[year], `population.population.${ year }`);
-}
-
-export function getDensityExpression(data: DataJenks, year: number): any {
-  if (year === undefined) {
-    return 'transparent';
-  }
-
-  return getExpression(data.density[year], `population.density.${ year }`);
+  return getExpression(data[year], `${ field }.${ year }`);
 }

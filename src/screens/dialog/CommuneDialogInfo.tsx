@@ -18,6 +18,11 @@ function CommuneDialog({ commune }: CommuneContentProps) {
   return (
     <CardContent>
       <Grid container rowSpacing={ 1 } flexDirection="column">
+        <Grid item>
+          <Typography variant="body2">
+            <FormattedMessage id="commune.code"/> : { commune.id }
+          </Typography>
+        </Grid>
         {
           commune.zipCode && (
             <Grid item>
@@ -34,6 +39,15 @@ function CommuneDialog({ commune }: CommuneContentProps) {
               id="commune.departement"/> : { `${ data.common.departements.departements[commune.departement].name } (${ commune.departement })` }
           </Typography>
         </Grid>
+        {
+          commune.area && (
+            <Grid item>
+              <Typography variant="body2">
+                <FormattedMessage id="commune.area"/> : <FormattedNumber value={ commune.area }/> km²
+              </Typography>
+            </Grid>
+          )
+        }
         {
           commune.population && (
             <Grid item>
@@ -55,19 +69,51 @@ function CommuneDialog({ commune }: CommuneContentProps) {
           )
         }
         {
-          commune.area && (
+          commune.population && commune.population.birth && (
             <Grid item>
-              <Typography variant="body2">
-                <FormattedMessage id="commune.area"/> : <FormattedNumber value={ commune.area }/> km²
+              <Typography variant='body2'>
+                <FormattedMessage id='commune.birth' values={ { year: Object.keys(commune.population.birth).slice(-1)[0] } }/> : <FormattedNumber
+                value={ Object.values(commune.population.birth).slice(-1)[0] }/>
               </Typography>
             </Grid>
           )
         }
-        <Grid item>
-          <Typography variant="body2">
-            <FormattedMessage id="commune.code"/> : { commune.id }
-          </Typography>
-        </Grid>
+        {
+          commune.population && commune.population.death && (
+            <Grid item>
+              <Typography variant='body2'>
+                <FormattedMessage id='commune.death' values={ { year: Object.keys(commune.population.death).slice(-1)[0] } }/> : <FormattedNumber
+                value={ Object.values(commune.population.death).slice(-1)[0] }/>
+              </Typography>
+            </Grid>
+          )
+        }
+        {
+          commune.population && commune.population.birthPerCapita && (
+            <Grid item>
+              <Typography variant="body2">
+                <FormattedMessage id="commune.birthPerCapita" values={ {
+                  year: Object.keys(commune.population.birthPerCapita)
+                              .slice(-1)[0]
+                } }/> : <FormattedNumber
+                value={ Object.values(commune.population.birthPerCapita).slice(-1)[0] }/>
+              </Typography>
+            </Grid>
+          )
+        }
+        {
+          commune.population && commune.population.deathPerCapita && (
+            <Grid item>
+              <Typography variant="body2">
+                <FormattedMessage id="commune.deathPerCapita" values={ {
+                  year: Object.keys(commune.population.deathPerCapita)
+                              .slice(-1)[0]
+                } }/> : <FormattedNumber
+                value={ Object.values(commune.population.deathPerCapita).slice(-1)[0] }/>
+              </Typography>
+            </Grid>
+          )
+        }
       </Grid>
     </CardContent>
   );

@@ -190,7 +190,8 @@ export const mapStyle: StyleSpecification = {
         'town',
         'village',
         'country',
-        'continent'
+        'continent',
+        'hamlet'
       ],
       layout: {
         'text-field': '{name:fr}',
@@ -275,7 +276,8 @@ export const mapStyle: StyleSpecification = {
           'class',
           'city',
           'town',
-          'village'
+          'village',
+          'hamlet'
         ]
       ],
       layout: {

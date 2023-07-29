@@ -45,7 +45,7 @@ function MapPage({ data }: MapPageProps) {
       });
     }
 
-    if (hover && selectedFeatures && selectedFeatures.length > 0 && selectedFeatures[0] === hover) {
+    if (hover && selectedFeatures && selectedFeatures.length > 0 && selectedFeatures[0].id === hover.id) {
       return;
     }
 
@@ -54,8 +54,6 @@ function MapPage({ data }: MapPageProps) {
     }
 
     if (selectedFeatures && selectedFeatures.length > 0) {
-      e.target.setFeatureState(selectedFeatures[0], { ...selectedFeatures[0].state, hover: true });
-
       setHover(selectedFeatures[0]);
     } else {
       setHover(undefined);
@@ -142,6 +140,12 @@ function MapPage({ data }: MapPageProps) {
       }
     }
   };
+
+  useEffect(() => {
+    if (hover && mapRef.current) {
+      mapRef.current.setFeatureState(hover, { ...hover.state, hover: true });
+    }
+  }, [hover]);
 
   useEffect(() => {
     if (clicked && clicked.id && data) {

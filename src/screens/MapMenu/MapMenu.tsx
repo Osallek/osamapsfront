@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useMap } from 'react-map-gl';
 import MenuSearch from 'screens/MapMenu/MenuSearch';
-import { Api, Level, Point } from 'types/api.types';
+import { AddressType, Api, Level, Point } from 'types/api.types';
 import { DataView } from 'types/maps.types';
 import { enumKeys } from 'utils/object.utils';
 
@@ -54,9 +54,24 @@ function MapMenu({ data }: MapMenuProps) {
     }
   }, [main, view, extra, level, data]);
 
-  const onSearchChange = (point: Point | undefined) => {
-    if (main && main.loaded() && point) {
-      main.flyTo({ center: [point.lon, point.lat] });
+  const onSearchChange = (point: Point | undefined, type: AddressType | undefined) => {
+    if (main && main.loaded() && point && type) {
+      let zoom;
+
+      switch (type) {
+        case AddressType.municipality:
+        case AddressType.locality:
+          zoom = 11;
+          break;
+        case AddressType.street:
+          zoom = 16;
+          break;
+        case AddressType.housenumber:
+          zoom = 18;
+          break;
+      }
+
+      main.flyTo({ center: [point.lon, point.lat], zoom });
     }
   };
 
