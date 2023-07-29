@@ -126,3 +126,30 @@ export type Point = {
   lat: number;
   lon: number;
 }
+
+export type AddressCollection = {
+  features: Array<AddressFeature>;
+}
+
+export type AddressFeature = {
+  geometry: Geometry;
+  properties: AddressProperties;
+}
+
+export type Geometry = {
+  coordinates: Array<number>;
+}
+
+export type AddressProperties = {
+  label: string,
+  id: string,
+  context: string,
+  type: AddressType,
+}
+
+export enum AddressType {
+  housenumber = 'housenumber',
+  street  = 'street',
+  locality = 'locality',
+  municipality = 'municipality',
+}

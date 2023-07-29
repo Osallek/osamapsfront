@@ -1,71 +1,100 @@
-import { Autocomplete, FilterOptionsState, TextField } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { Autocomplete, Card, CardContent, Grid, Popper, TextField, Typography } from '@mui/material';
+import { PopperProps } from '@mui/material/Popper';
+import { addressApi } from 'api/api';
+import { debounce } from 'lodash';
+import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { Api, Commune } from 'types/api.types';
+import { AddressFeature, Point } from 'types/api.types';
 
-function stripDiacritics(string: string) {
-  return typeof string.normalize !== 'undefined'
-    ? string.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    : string;
-}
+const SearchPopper = (props: PopperProps, nbOptions: number) => {
+  return <Popper { ...props } sx={ { width: 'fit-content !important' } } placement="bottom-start"/>;
+};
 
 interface MenuSearchProps {
-  data: Api;
-  onChange: (commune: Commune | undefined) => void;
+  onChange: (commune: Point | undefined) => void;
 }
 
-function MenuSearch({ data, onChange }: MenuSearchProps) {
-  const [communes, setCommunes] = useState<Array<Commune>>([]);
-  const [commune, setCommune] = useState<Commune | undefined>(undefined);
+function MenuSearch({ onChange }: MenuSearchProps) {
+  const [value, setValue] = React.useState<AddressFeature | null>(null);
+  const [inputValue, setInputValue] = React.useState('');
+  const [options, setOptions] = React.useState<readonly AddressFeature[]>([]);
 
-  useEffect(() => {
-    setCommunes(Object.values(data.common.communes.communes).sort((a, b) => a.name.localeCompare(b.name)));
-  }, [data]);
+  const fetch = React.useMemo(
+    () =>
+      debounce(async (q: string) => {
+        try {
+          const { data } = await addressApi.search(q);
 
-  useEffect(() => {
-    //Todo moveTo
-  }, [commune]);
+          setOptions(data.features);
+        } catch (e) {
+        }
+      }, 400), []);
+
+  React.useEffect(() => {
+    if (inputValue === '') {
+      setOptions(value ? [value] : []);
+      return undefined;
+    }
+
+    fetch(inputValue);
+  }, [value, inputValue, fetch]);
 
   return (
     <Autocomplete
       sx={ { mb: 1, mt: 1, minWidth: 230 } }
-      disablePortal
       selectOnFocus
       clearOnBlur
       handleHomeEndKeys
       disableListWrap
-      options={ communes }
-      value={ commune ?? null }
-      getOptionLabel={ option => `${ option.name }${ option.zipCode ? ` (${ option.zipCode })` : '' }` }
-      groupBy={ option => option.name.slice(0, 1).toUpperCase() }
-      getOptionDisabled={ option => option.point === undefined }
+      autoComplete
+      includeInputInList
+      filterSelectedOptions
+      options={ options }
+      value={ value }
       noOptionsText={ <FormattedMessage id="common.notFound"/> }
+      getOptionLabel={ (option) => option.properties.label }
+      isOptionEqualToValue={ (option, v) => option.properties.id === v.properties.id }
+      filterOptions={ (x) => x }
       renderInput={ (params) => <TextField { ...params } label={ <FormattedMessage id="common.search"/> }/> }
-      filterOptions={ (options: Commune[], { inputValue, getOptionLabel }: FilterOptionsState<Commune>) => {
-        let input = inputValue.trim();
-
-        input = input.toLowerCase();
-        input = stripDiacritics(input);
-
-        const filteredOptions: Commune[] = !input ? options
-          : options.filter((option) => {
-            let candidate = getOptionLabel(option);
-            candidate = candidate.toLowerCase();
-            candidate = stripDiacritics(candidate);
-
-            return candidate.indexOf(input) > -1;
-          });
-
-        return filteredOptions.slice(0, 100);
+      onChange={ (event: any, newValue: AddressFeature | null) => {
+        setOptions(newValue ? [newValue, ...options] : options);
+        setValue(newValue);
+        onChange(
+          newValue ? { lat: newValue.geometry.coordinates[1], lon: newValue.geometry.coordinates[0] } : undefined);
       } }
-      onChange={ (event: any, newValue: Commune | null) => {
-        setCommune(newValue ?? undefined);
-        onChange.call(undefined, newValue ?? undefined);
+      onInputChange={ (event, newInputValue) => {
+        setInputValue(newInputValue);
       } }
-      onInputChange={ (event, value, reason) => {
-        console.log(value);
-        console.log(reason);
+      renderOption={ (props, option) => {
+        return (
+          <li { ...props } style={ { ...props.style, backgroundColor: 'transparent' } }>
+            <Card elevation={ 0 } sx={ { flex: 'none', p: 0, width: '100%' } }>
+              <CardContent sx={ { p: 1, pb: '4px !important' } }>
+                <Grid container sx={ { justifyContent: 'space-between' } }>
+                  <Grid container item xs={ 9 } sx={ { flexDirection: 'column' } }>
+                    <Grid item>
+                      <Typography variant="h6">
+                        { option.properties.label }
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="body2" sx={ { color: 'rgba(0, 0, 0, 0.6)' } }>
+                        { option.properties.context }
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                  <Grid container item xs={ 3 } sx={ { alignContent: 'center', justifyContent: 'flex-end' } }>
+                    <Typography variant="body2" sx={ { textAlign: 'end', color: 'rgba(0, 0, 0, 0.6)' } }>
+                      <FormattedMessage id={ `common.address.type.${ option.properties.type }` }/>
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </li>
+        );
       } }
+      PopperComponent={ props => SearchPopper(props, options.length) }
     />
   );
 }

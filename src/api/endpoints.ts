@@ -1,4 +1,4 @@
-const endpoints = {
+export const endpoints = {
   data: {
     area: () => `/data/area.json`,
     birth: () => `/data/birth.json`,
@@ -10,5 +10,9 @@ const endpoints = {
     pop: () => `/data/pop.json`,
   },
 };
+
+export const addressEndpoints = {
+  search: '/search'
+}
 
 export default endpoints;
