@@ -91,7 +91,7 @@ function DataDialog({ data, onClose }: DataDialogProps) {
       }
       {
         tab === 6 && (
-          <DialogLine node={ data } mapper={ node => birthDeathLine(node) } yAxis={ [{ dataKey: 'birth' }] }
+          <DialogLine node={ data } mapper={ node => birthDeathLine(node) } yAxis={ [{ domain: [0, 'dataMax'] }] }
                       lines={ [{ dataKey: 'birth', stroke: '#82CA9D' }, { dataKey: 'death', stroke: '#DA1D1D' }] }
                       tooltip={ <Tooltip content={ ({ active, payload }) => {
                         if (!active || !payload || payload.length <= 0) {
@@ -188,7 +188,8 @@ function DataDialog({ data, onClose }: DataDialogProps) {
       }
       {
         tab === 8 && (
-          <DialogLine node={ data } mapper={ node => birthDeathPerCapitaLine(node) } yAxis={ [{ dataKey: 'birth' }] }
+          <DialogLine node={ data } mapper={ node => birthDeathPerCapitaLine(node) }
+                      yAxis={ [{ domain: [0, 'dataMax'] }] }
                       lines={ [{ dataKey: 'birth', stroke: '#82CA9D' }, { dataKey: 'death', stroke: '#DA1D1D' }] }
                       tooltip={ <Tooltip content={ ({ active, payload }) => {
                         if (!active || !payload || payload.length <= 0) {

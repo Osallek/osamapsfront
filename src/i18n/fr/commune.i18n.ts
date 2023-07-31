@@ -7,8 +7,8 @@ const commune = {
   'commune.density': 'Densité de population en {year}',
   'commune.birth': 'Nombre de naissances en {year}',
   'commune.death': 'Nombre décès en {year}',
-  'commune.birthPerCapita': 'Naissances par habitant en {year}',
-  'commune.deathPerCapita': 'Décès par habitant en {year}',
+  'commune.birthPerCapita': 'Naissances pour 1000 habitants en {year}',
+  'commune.deathPerCapita': 'Décès pour 1000 habitants en {year}',
 }
 
 export default commune;

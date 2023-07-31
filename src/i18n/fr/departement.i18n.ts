@@ -7,8 +7,8 @@ const departement = {
   'departement.density': 'Densité de population en {year}',
   'departement.birth': 'Nombre de naissances en {year}',
   'departement.death': 'Nombre décès en {year}',
-  'departement.birthPerCapita': 'Naissances par habitant en {year}',
-  'departement.deathPerCapita': 'Décès par habitant en {year}',
+  'departement.birthPerCapita': 'Naissances pour 1000 habitants en {year}',
+  'departement.deathPerCapita': 'Décès pour 1000 habitants en {year}',
 };
 
 export default departement;
