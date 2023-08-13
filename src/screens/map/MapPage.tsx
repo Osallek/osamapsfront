@@ -16,24 +16,29 @@ function MapPage() {
     ;(async () => {
       try {
         const start = new Date();
-        const pop = api.data.pop();
-        const density = api.data.density();
-        const deathPerCapita = api.data.deathPerCapita();
-        const birthPerCapita = api.data.birthPerCapita();
-        const death = api.data.death();
-        const birth = api.data.birth();
-        const area = api.data.area();
         const common = api.data.common();
+        const pop = api.jenks.pop();
+        const density = api.jenks.density();
+        const deathPerCapita = api.jenks.deathPerCapita();
+        const birthPerCapita = api.jenks.birthPerCapita();
+        const death = api.jenks.death();
+        const birth = api.jenks.birth();
+        const area = api.jenks.area();
 
         const d: Api = {
-          pop: (await pop).data,
-          density: (await density).data,
-          deathPerCapita: (await deathPerCapita).data,
-          birthPerCapita: (await birthPerCapita).data,
-          death: (await death).data,
-          birth: (await birth).data,
-          area: (await area).data,
           common: (await common).data,
+          jenks: {
+            population: (await pop).data,
+            density: (await density).data,
+            deathPerCapita: (await deathPerCapita).data,
+            birthPerCapita: (await birthPerCapita).data,
+            death: (await death).data,
+            birth: (await birth).data,
+            area: (await area).data,
+          },
+          regions: {},
+          departements: {},
+          communes: {}
         };
 
         console.log('fetched: ' + (new Date().getTime() - start.getTime()) + 'ms');

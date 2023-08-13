@@ -1,12 +1,34 @@
 export type Api = {
-  pop: Data;
-  density: Data;
-  deathPerCapita: Data;
-  birthPerCapita: Data;
-  death: Data;
-  birth: Data;
-  area: Data;
-  common: Data;
+  common: Common;
+  jenks: DataJenks;
+  regions: Record<string, Region>;
+  departements: Record<string, Departement>;
+  communes: Record<string, Commune>;
+}
+
+export type Common = {
+  communes: Array<string>;
+  departements: Array<string>;
+  regions: Array<string>;
+}
+
+export type DataJenks = {
+  area: DataJenksNode;
+  population: Record<number, DataJenksNode>;
+  density: Record<number, DataJenksNode>;
+  birth: Record<number, DataJenksNode>;
+  death: Record<number, DataJenksNode>;
+  birthPerCapita: Record<number, DataJenksNode>;
+  deathPerCapita: Record<number, DataJenksNode>;
+}
+
+export type DataJenksNode = {
+  regions: Record<string, number>;
+  nbRegions: number;
+  departements: Record<string, number>;
+  nbDepartements: number;
+  communes: Record<string, number>;
+  nbCommunes: number;
 }
 
 export type Data = {
@@ -22,17 +44,6 @@ export type IdName<I, N> = {
 
 export type DataNodes = {
   level: Level;
-  jenks: DataJenks;
-}
-
-export type DataJenks = {
-  population: Record<number, Array<number>>;
-  density: Record<number, Array<number>>;
-  birth: Record<number, Array<number>>;
-  death: Record<number, Array<number>>;
-  birthPerCapita: Record<number, Array<number>>;
-  deathPerCapita: Record<number, Array<number>>;
-  area: Array<number>;
 }
 
 export type Communes = DataNodes & {
@@ -56,6 +67,7 @@ export type DataNode<P extends DataPopulations> = IdName<string, string> & {
 
 export type DataPopulations = {
   population: Record<number, number>;
+  allPop: Record<number, Record<number, Record<number, number>>>;
   countryRanks: Record<number, number>;
   density: Record<number, number>;
   densityCountryRanks: Record<number, number>;
@@ -149,7 +161,7 @@ export type AddressProperties = {
 
 export enum AddressType {
   housenumber = 'housenumber',
-  street  = 'street',
+  street = 'street',
   locality = 'locality',
   municipality = 'municipality',
 }

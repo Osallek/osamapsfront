@@ -1,7 +1,7 @@
 import { addressEndpoints } from 'api/endpoints';
 import { endpoints } from 'api/index';
 import axios, { AxiosPromise } from 'axios';
-import { AddressCollection, Data } from 'types/api.types';
+import { AddressCollection, Common, Commune, DataJenksNode, Departement, Region } from 'types/api.types';
 
 const ws = axios.create({
   baseURL: process.env.REACT_APP_DATA_BASE_URL,
@@ -17,14 +17,19 @@ const addressWs = axios.create({
 
 export const api = {
   data: {
-    area: (): AxiosPromise<Data> => ws.get(endpoints.data.area()),
-    birth: (): AxiosPromise<Data> => ws.get(endpoints.data.birth()),
-    birthPerCapita: (): AxiosPromise<Data> => ws.get(endpoints.data.birthPerCapita()),
-    common: (): AxiosPromise<Data> => ws.get(endpoints.data.common()),
-    death: (): AxiosPromise<Data> => ws.get(endpoints.data.death()),
-    deathPerCapita: (): AxiosPromise<Data> => ws.get(endpoints.data.deathPerCapita()),
-    density: (): AxiosPromise<Data> => ws.get(endpoints.data.density()),
-    pop: (): AxiosPromise<Data> => ws.get(endpoints.data.pop()),
+    common: (): AxiosPromise<Common> => ws.get(endpoints.data.common()),
+    region: (id: string): AxiosPromise<Region> => ws.get(endpoints.data.region(id)),
+    departement: (id: string): AxiosPromise<Departement> => ws.get(endpoints.data.departement(id)),
+    commune: (id: string): AxiosPromise<Commune> => ws.get(endpoints.data.commune(id)),
+  },
+  jenks: {
+    area: (): AxiosPromise<DataJenksNode> => ws.get(endpoints.jenks.area()),
+    birth: (): AxiosPromise<Record<number, DataJenksNode>> => ws.get(endpoints.jenks.birth()),
+    birthPerCapita: (): AxiosPromise<Record<number, DataJenksNode>> => ws.get(endpoints.jenks.birthPerCapita()),
+    death: (): AxiosPromise<Record<number, DataJenksNode>> => ws.get(endpoints.jenks.death()),
+    deathPerCapita: (): AxiosPromise<Record<number, DataJenksNode>> => ws.get(endpoints.jenks.deathPerCapita()),
+    density: (): AxiosPromise<Record<number, DataJenksNode>> => ws.get(endpoints.jenks.density()),
+    pop: (): AxiosPromise<Record<number, DataJenksNode>> => ws.get(endpoints.jenks.pop()),
   },
 };
 

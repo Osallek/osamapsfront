@@ -26,13 +26,13 @@ function DepartementDialogInfo({ departement }: DepartementDialogInfoProps) {
         <Grid item>
           <Typography variant="body2">
             <FormattedMessage
-              id="departement.region"/> : { `${ data.common.regions.regions[departement.region].name } (${ departement.region })` }
+              id="departement.region"/> : { `${ data.regions[departement.region].name } (${ departement.region })` }
           </Typography>
         </Grid>
         <Grid item>
           <Typography variant="body2">
             <FormattedMessage
-              id="departement.chefLieu"/> : { `${ data.common.communes.communes[departement.chefLieu].name } ${ data.common.communes.communes[departement.chefLieu].zipCode ? `(${ data.common.communes.communes[departement.chefLieu].zipCode })` : '' }` }
+              id="departement.chefLieu"/> : { `${ data.communes[departement.chefLieu].name } ${ data.communes[departement.chefLieu].zipCode ? `(${ data.communes[departement.chefLieu].zipCode })` : '' }` }
           </Typography>
         </Grid>
         {

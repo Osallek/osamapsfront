@@ -26,7 +26,7 @@ function RegionPopUp({ region, onClose }: RegionContentProps) {
           <Grid item>
             <Typography variant="body2">
               <FormattedMessage
-                id="region.chefLieu"/> : { `${ data.common.communes.communes[region.chefLieu].name } ${ data.common.communes.communes[region.chefLieu].zipCode ? `(${ data.common.communes.communes[region.chefLieu].zipCode })` : '' }` }
+                id="region.chefLieu"/> : { `${ data.communes[region.chefLieu].name } ${ data.communes[region.chefLieu].zipCode ? `(${ data.communes[region.chefLieu].zipCode })` : '' }` }
             </Typography>
           </Grid>
           {

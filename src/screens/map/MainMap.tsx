@@ -1,5 +1,4 @@
 import { Dialog } from '@mui/material';
-import { merge } from 'lodash';
 import { MapGeoJSONFeature } from 'maplibre-gl';
 import { useEffect, useRef, useState } from 'react';
 import { LngLat, Popup } from 'react-map-gl';
@@ -7,9 +6,10 @@ import Map, { MapLayerMouseEvent, MapRef, MapSourceDataEvent } from 'react-map-g
 import DataDialog from 'screens/dialog/DataDialog';
 import { mapStyle } from 'screens/map/map-style';
 import DataPopup from 'screens/popup/DataPopup';
-import { Api, Commune, Departement, Region } from 'types/api.types';
+import { Api, Commune, Departement, Level, Region } from 'types/api.types';
 import { MapsLayers } from 'types/maps.types';
-import { flatten } from 'utils/object.utils';
+import { fetchRegion, fetchCommune, fetchDepartement } from 'utils/api.utils';
+import { getFeatureState } from 'utils/layer.utils';
 
 interface MapPageProps {
   data: Api;
@@ -104,36 +104,14 @@ function MapPage({ data }: MapPageProps) {
         { layers: [MapsLayers.REGION_DATA, MapsLayers.DEPARTEMENT_DATA, MapsLayers.COMMUNE_DATA] })) {
 
         if (feature.id && feature.source === 'decoupageAdministratif' && !feature.state.loaded) {
-          if (feature.sourceLayer === 'regions' && data.common.regions && data.common.regions.regions[feature.id]) {
+          if (feature.sourceLayer === 'regions') {
+            e.target.setFeatureState(feature, getFeatureState(data, Level.REGION, feature.id as string, feature.state));
+          } else if (feature.sourceLayer === 'departements') {
             e.target.setFeatureState(feature,
-              flatten(merge({},
-                feature.state, data.common.regions.regions[feature.id], data.pop.regions.regions[feature.id],
-                data.density.regions.regions[feature.id], data.deathPerCapita.regions.regions[feature.id],
-                data.birthPerCapita.regions.regions[feature.id], data.death.regions.regions[feature.id],
-                data.birth.regions.regions[feature.id], data.area.regions.regions[feature.id],
-                { loaded: true }
-              )));
-          } else if (feature.sourceLayer === 'departements' && data.common.departements && data.common.departements.departements[feature.id]) {
+              getFeatureState(data, Level.DEPARTEMENT, feature.id as string, feature.state));
+          } else if (feature.sourceLayer === 'communes') {
             e.target.setFeatureState(feature,
-              flatten(merge({},
-                feature.state, data.common.departements.departements[feature.id],
-                data.pop.departements.departements[feature.id],
-                data.density.departements.departements[feature.id],
-                data.deathPerCapita.departements.departements[feature.id],
-                data.birthPerCapita.departements.departements[feature.id],
-                data.death.departements.departements[feature.id],
-                data.birth.departements.departements[feature.id], data.area.departements.departements[feature.id],
-                { loaded: true }
-              )));
-          } else if (feature.sourceLayer === 'communes' && data.common.communes && data.common.communes.communes[feature.id]) {
-            e.target.setFeatureState(feature,
-              flatten(merge({},
-                feature.state, data.common.communes.communes[feature.id], data.pop.communes.communes[feature.id],
-                data.density.communes.communes[feature.id], data.deathPerCapita.communes.communes[feature.id],
-                data.birthPerCapita.communes.communes[feature.id], data.death.communes.communes[feature.id],
-                data.birth.communes.communes[feature.id], data.area.communes.communes[feature.id],
-                { loaded: true }
-              )));
+              getFeatureState(data, Level.COMMUNE, feature.id as string, feature.state));
           }
         }
 
@@ -148,46 +126,37 @@ function MapPage({ data }: MapPageProps) {
   }, [hover]);
 
   useEffect(() => {
-    if (clicked && clicked.id && data) {
-      switch (clicked.layer.id) {
-        case 'region': {
-          if (data.common.regions.regions[clicked.id]) {
-            setActiveData(merge({},
-              data.common.regions.regions[clicked.id], data.pop.regions.regions[clicked.id],
-              data.density.regions.regions[clicked.id], data.deathPerCapita.regions.regions[clicked.id],
-              data.birthPerCapita.regions.regions[clicked.id], data.death.regions.regions[clicked.id],
-              data.birth.regions.regions[clicked.id], data.area.regions.regions[clicked.id]));
+    ;(async () => {
+      if (clicked && clicked.id && data) {
+        switch (clicked.layer.id) {
+          case 'region': {
+            if (data.common.regions.indexOf(clicked.id as string) >= 0) {
+              await fetchRegion(data, clicked.id as string);
+              setActiveData(data.regions[clicked.id]);
+            }
+            break;
           }
-          break;
-        }
-        case 'departement': {
-          if (data.common.departements.departements[clicked.id]) {
-            setActiveData(merge({},
-              data.common.departements.departements[clicked.id], data.pop.departements.departements[clicked.id],
-              data.density.departements.departements[clicked.id],
-              data.deathPerCapita.departements.departements[clicked.id],
-              data.birthPerCapita.departements.departements[clicked.id],
-              data.death.departements.departements[clicked.id],
-              data.birth.departements.departements[clicked.id], data.area.departements.departements[clicked.id]));
+          case 'departement': {
+            if (data.common.departements.indexOf(clicked.id as string) >= 0) {
+              await fetchDepartement(data, clicked.id as string);
+              setActiveData(data.departements[clicked.id]);
+            }
+            break;
           }
-          break;
-        }
-        case 'commune': {
-          if (data.pop.communes.communes[clicked.id]) {
-            setActiveData(merge({},
-              data.common.communes.communes[clicked.id], data.pop.communes.communes[clicked.id],
-              data.density.communes.communes[clicked.id], data.deathPerCapita.communes.communes[clicked.id],
-              data.birthPerCapita.communes.communes[clicked.id], data.death.communes.communes[clicked.id],
-              data.birth.communes.communes[clicked.id], data.area.communes.communes[clicked.id]));
+          case 'commune': {
+            if (data.common.communes.indexOf(clicked.id as string) >= 0) {
+              await fetchCommune(data, clicked.id as string);
+              setActiveData(data.communes[clicked.id]);
+            }
+            break;
           }
-          break;
         }
+      } else {
+        setPosition(undefined);
+        setActiveData(undefined);
+        setDialog(false);
       }
-    } else {
-      setPosition(undefined);
-      setActiveData(undefined);
-      setDialog(false);
-    }
+    })();
   }, [clicked, data]);
 
   return (

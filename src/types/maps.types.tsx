@@ -2,11 +2,8 @@ import { Autocomplete, TextField } from '@mui/material';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { MapRef } from 'react-map-gl';
-import {
-  Api, Commune, CommunePopulations, DataPopulations, Departement, DepartementPopulations, Level, Region
-} from 'types/api.types';
+import { Api, Commune, CommunePopulations, Departement, DepartementPopulations, Level, Region } from 'types/api.types';
 import { getAreaExpression, getYearExpression } from 'utils/layer.utils';
-import { onlyUnique } from 'utils/object.utils';
 
 export enum MapsLayers {
   SATELLITE = 'satellite',
@@ -78,45 +75,41 @@ export namespace DataLevel {
 
   export function getRankLength(level: DataLevel, node: Region | Departement | Commune, data: Api): number {
     if ((node as Commune).departement) {
+      const commune = (node as Commune);
       switch (level) {
         case DataLevel.COUNTRY:
-          return Object.keys(data.common.communes.communes).length;
+          return Object.keys(data.common.communes).length;
 
         case DataLevel.REGION:
-          if (data && data.common.regions && data.common.regions.regions && data.common.departements && data.common.departements.departements) {
-            const departement: Departement | undefined = data.common.departements.departements[(node as Commune).departement];
+          if (data && data.regions && data.departements) {
+            const departement = data.departements[commune.departement];
 
-            if (departement && departement.region && data.common.regions.regions[departement.region]) {
-              return data.common.regions.regions[departement.region].departements.map(
-                d => data.common.departements.departements[d])
-                                                                    .filter(d => d !== undefined)
-                                                                    .map(d => d.communes.length)
-                                                                    .reduce((acc, v) => {return acc + v;}, 0);
-            }
+            return data.regions[departement.region].departements.map(d => data.departements[d])
+                                                   .filter(d => d !== undefined)
+                                                   .map(d => d.communes.length)
+                                                   .reduce((acc, v) => {return acc + v;}, 0);
           }
           break;
 
         case DataLevel.DEPARTEMENT:
-          if (data && data.common.departements && data.common.departements.departements && data.common.departements.departements[(node as Commune).departement]) {
-            return data.common.departements.departements[(node as Commune).departement].communes.length;
+          if (data && data.departements && data.departements[commune.departement]) {
+            return data.departements[commune.departement].communes.length;
           }
           break;
       }
     } else if ((node as Departement).region) {
+      const departement = (node as Departement);
       switch (level) {
         case DataLevel.REGION:
-          if (data && data.common.regions && data.common.regions.regions && data.common.regions.regions[(node as Departement).region]) {
-            return data.common.regions.regions[(node as Departement).region].departements.length;
-          }
-          break;
+          return data.regions[departement.region].departements.length;
 
         case DataLevel.COUNTRY:
-          return Object.keys(data.common.departements.departements).length;
+          return Object.keys(data.departements).length;
       }
     } else if ((node as Region).departements) {
       switch (level) {
         case DataLevel.COUNTRY:
-          return Object.keys(data.common.regions.regions).length;
+          return Object.keys(data.regions).length;
       }
     }
 
@@ -149,108 +142,95 @@ export namespace DataView {
 
       case DataView.AREA:
         map.getMap()
-           .setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data.area.communes.jenks));
+           .setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color', getAreaExpression(data.jenks.area, level));
         map.getMap()
-           .setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
-             getAreaExpression(data.area.departements.jenks));
-        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getAreaExpression(data.area.regions.jenks));
+           .setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color', getAreaExpression(data.jenks.area, level));
+        map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color', getAreaExpression(data.jenks.area, level));
         break;
 
       case DataView.POPULATION:
         map.getMap()
            .setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
-             getYearExpression(data.pop.communes.jenks.population, extra.year, 'population.population'));
+             getYearExpression(data.jenks.population, level, extra.year, 'population'));
         map.getMap()
            .setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
-             getYearExpression(data.pop.departements.jenks.population, extra.year, 'population.population'));
+             getYearExpression(data.jenks.population, level, extra.year, 'population'));
         map.getMap()
            .setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
-             getYearExpression(data.pop.regions.jenks.population, extra.year, 'population.population'));
+             getYearExpression(data.jenks.population, level, extra.year, 'population'));
         break;
 
       case DataView.DENSITY:
         map.getMap()
            .setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
-             getYearExpression(data.density.communes.jenks.density, extra.year, 'population.density'));
+             getYearExpression(data.jenks.density, level, extra.year, 'density'));
         map.getMap()
            .setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
-             getYearExpression(data.density.departements.jenks.density, extra.year, 'population.density'));
+             getYearExpression(data.jenks.density, level, extra.year, 'density'));
         map.getMap()
            .setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
-             getYearExpression(data.density.regions.jenks.density, extra.year, 'population.density'));
+             getYearExpression(data.jenks.density, level, extra.year, 'density'));
         break;
 
       case DataView.BIRTH:
         map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
-          getYearExpression(data.birth.communes.jenks.birth, extra.year, 'population.birth'));
+          getYearExpression(data.jenks.birth, level, extra.year, 'birth'));
         map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
-          getYearExpression(data.birth.departements.jenks.birth, extra.year, 'population.birth'));
+          getYearExpression(data.jenks.birth, level, extra.year, 'birth'));
         map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
-          getYearExpression(data.birth.regions.jenks.birth, extra.year, 'population.birth'));
+          getYearExpression(data.jenks.birth, level, extra.year, 'birth'));
         break;
 
       case DataView.DEATH:
         map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
-          getYearExpression(data.death.communes.jenks.death, extra.year, 'population.death'));
+          getYearExpression(data.jenks.death, level, extra.year, 'death'));
         map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
-          getYearExpression(data.death.departements.jenks.death, extra.year, 'population.death'));
+          getYearExpression(data.jenks.death, level, extra.year, 'death'));
         map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
-          getYearExpression(data.death.regions.jenks.death, extra.year, 'population.death'));
+          getYearExpression(data.jenks.death, level, extra.year, 'death'));
         break;
 
       case DataView.BIRTH_PER_CAPITA:
         map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
-          getYearExpression(data.birthPerCapita.communes.jenks.birthPerCapita, extra.year,
-            'population.birthPerCapita'));
+          getYearExpression(data.jenks.birthPerCapita, level, extra.year, 'birthPerCapita'));
         map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
-          getYearExpression(data.birthPerCapita.departements.jenks.birthPerCapita, extra.year,
-            'population.birthPerCapita'));
+          getYearExpression(data.jenks.birthPerCapita, level, extra.year, 'birthPerCapita'));
         map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
-          getYearExpression(data.birthPerCapita.regions.jenks.birthPerCapita, extra.year, 'population.birthPerCapita'));
+          getYearExpression(data.jenks.birthPerCapita, level, extra.year, 'birthPerCapita'));
         break;
 
       case DataView.DEATH_PER_CAPITA:
         map.getMap().setPaintProperty(MapsLayers.COMMUNE_DATA, 'fill-color',
-          getYearExpression(data.deathPerCapita.communes.jenks.deathPerCapita, extra.year,
-            'population.deathPerCapita'));
+          getYearExpression(data.jenks.deathPerCapita, level, extra.year, 'deathPerCapita'));
         map.getMap().setPaintProperty(MapsLayers.DEPARTEMENT_DATA, 'fill-color',
-          getYearExpression(data.deathPerCapita.departements.jenks.deathPerCapita, extra.year,
-            'population.deathPerCapita'));
+          getYearExpression(data.jenks.deathPerCapita, level, extra.year, 'deathPerCapita'));
         map.getMap().setPaintProperty(MapsLayers.REGION_DATA, 'fill-color',
-          getYearExpression(data.deathPerCapita.regions.jenks.deathPerCapita, extra.year, 'population.deathPerCapita'));
+          getYearExpression(data.jenks.deathPerCapita, level, extra.year, 'deathPerCapita'));
         break;
     }
   }
 
   export function subMenu(layer: DataView, level: Level, data: Api, extra: any, setExtra: (value: any) => void): React.ReactNode {
-    let years;
-
     switch (layer) {
       case DataView.SATELLITE:
       case DataView.AREA:
         return <></>;
       case DataView.POPULATION:
+        return yearsAutocomplete(Object.keys(data.jenks.population).reverse(), extra, setExtra);
       case DataView.DENSITY:
-        return yearsAutocomplete(data.pop.regions.regions, pop => pop.population, extra, setExtra);
+        return yearsAutocomplete(Object.keys(data.jenks.density).reverse(), extra, setExtra);
       case DataView.BIRTH:
+        return yearsAutocomplete(Object.keys(data.jenks.birth).reverse(), extra, setExtra);
       case DataView.DEATH:
-        return yearsAutocomplete(data.birth.regions.regions, pop => pop.birth, extra, setExtra);
+        return yearsAutocomplete(Object.keys(data.jenks.death).reverse(), extra, setExtra);
       case DataView.BIRTH_PER_CAPITA:
+        return yearsAutocomplete(Object.keys(data.jenks.birthPerCapita).reverse(), extra, setExtra);
       case DataView.DEATH_PER_CAPITA:
-        return yearsAutocomplete(data.birthPerCapita.regions.regions, pop => pop.birthPerCapita, extra, setExtra);
+        return yearsAutocomplete(Object.keys(data.jenks.deathPerCapita).reverse(), extra, setExtra);
     }
   }
 
-  function yearsAutocomplete(data: Record<string, Region>, mapper: (pop: DataPopulations) => Record<number, number>, extra: any, setExtra: (value: any) => void): React.ReactNode {
-    const years = Object.values(data)
-                        .filter(c => !!c.population && !!mapper(c.population))
-                        .map(c => Object.keys(mapper(c.population)))
-                        .flat()
-                        .filter(onlyUnique)
-                        .sort()
-                        .reverse()
-                        .map(y => Number(y));
-
+  function yearsAutocomplete(years: Array<string>, extra: any, setExtra: (value: any) => void): React.ReactNode {
     if (years.length === 0) {
       return <></>;
     }

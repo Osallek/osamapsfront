@@ -37,14 +37,17 @@ function CommunePopUp({ commune, onClose }: CommuneContentProps) {
           <Grid item>
             <Typography variant="body2">
               <FormattedMessage
-                id="commune.departement"/> : { `${ data.common.departements.departements[commune.departement].name } (${ commune.departement })` }
+                id="commune.departement"/> : { `${ data.departements[commune.departement].name } (${ commune.departement })` }
             </Typography>
           </Grid>
           {
             commune.population && (
               <Grid item>
-                <Typography variant='body2'>
-                  <FormattedMessage id='commune.population' values={ { year: Object.keys(commune.population.population).slice(-1)[0] } }/> : <FormattedNumber
+                <Typography variant="body2">
+                  <FormattedMessage id="commune.population" values={ {
+                    year: Object.keys(commune.population.population)
+                                .slice(-1)[0]
+                  } }/> : <FormattedNumber
                   value={ Object.values(commune.population.population).slice(-1)[0] }/>
                 </Typography>
               </Grid>
@@ -53,8 +56,11 @@ function CommunePopUp({ commune, onClose }: CommuneContentProps) {
           {
             commune.population && commune.population.density && (
               <Grid item>
-                <Typography variant='body2'>
-                  <FormattedMessage id='commune.density' values={ { year: Object.keys(commune.population.density).slice(-1)[0] } }/> : <FormattedNumber
+                <Typography variant="body2">
+                  <FormattedMessage id="commune.density" values={ {
+                    year: Object.keys(commune.population.density)
+                                .slice(-1)[0]
+                  } }/> : <FormattedNumber
                   value={ Object.values(commune.population.density).slice(-1)[0] }/> habitants/km²
                 </Typography>
               </Grid>

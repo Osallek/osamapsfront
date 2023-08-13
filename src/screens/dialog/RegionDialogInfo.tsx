@@ -26,7 +26,7 @@ function RegionDialogInfo({ region }: RegionDialogInfoProps) {
         <Grid item>
           <Typography variant="body2">
             <FormattedMessage
-              id="region.chefLieu"/> : { `${ data.common.communes.communes[region.chefLieu].name } ${ data.common.communes.communes[region.chefLieu].zipCode ? `(${ data.common.communes.communes[region.chefLieu].zipCode })` : '' }` }
+              id="region.chefLieu"/> : { `${ data.communes[region.chefLieu].name } ${ data.communes[region.chefLieu].zipCode ? `(${ data.communes[region.chefLieu].zipCode })` : '' }` }
           </Typography>
         </Grid>
         {
@@ -43,8 +43,7 @@ function RegionDialogInfo({ region }: RegionDialogInfoProps) {
             <Grid item>
               <Typography variant="body2">
                 <FormattedMessage id="region.population" values={ {
-                  year: Object.keys(region.population.population)
-                              .slice(-1)[0]
+                  year: Object.keys(region.population.population).slice(-1)[0]
                 } }/> : <FormattedNumber
                 value={ Object.values(region.population.population).slice(-1)[0] }/>
               </Typography>
